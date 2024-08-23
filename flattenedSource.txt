@@ -74,19 +74,57 @@ test('renders learn react link', () => {
 
 
 ==== START OF FILE: src\components\Accordion.js ====
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import '../styles/accordion.css';
 
-const Accordion = ({ title, children }) => {
-    const [isOpen, setIsOpen] = useState(false);
+const AccordionItem = ({ title, children, isOpen, onClick }) => {
+    const contentRef = useRef(null);
+
+    useEffect(() => {
+        if (contentRef.current) {
+            contentRef.current.style.maxHeight = isOpen
+                ? `${contentRef.current.scrollHeight}px`
+                : '0px';
+            contentRef.current.style.paddingTop = isOpen ? '15px' : '0px';
+            contentRef.current.style.paddingBottom = isOpen ? '15px' : '0px';
+        }
+    }, [isOpen]);
 
     return (
-        <div className="accordion">
-            <div className="accordion-header" onClick={() => setIsOpen(!isOpen)} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div className="accordion-item">
+            <div className="accordion-header" onClick={onClick}>
                 <span className={`arrow ${isOpen ? 'open' : ''}`}></span>
                 {title}
             </div>
-            {isOpen && <div className="accordion-body">{children}</div>}
+            <div
+                ref={contentRef}
+                className={`accordion-body ${isOpen ? 'open' : ''}`}
+            >
+                {children}
+            </div>
+        </div>
+    );
+};
+
+const Accordion = ({ items }) => {
+    const [openIndex, setOpenIndex] = useState(null);
+
+    const handleClick = (index) => {
+        setOpenIndex(openIndex === index ? null : index);
+    };
+
+    return (
+        <div className="accordion">
+            {items.map((item, index) => (
+                <AccordionItem
+                    key={index}
+                    title={item.title}
+                    isOpen={openIndex === index}
+                    onClick={() => handleClick(index)}
+                >
+                    {item.content}
+                </AccordionItem>
+            ))}
         </div>
     );
 };
@@ -135,6 +173,11 @@ const DemoPage = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedOption, setSelectedOption] = useState('Option 1');
     const [currentPage, setCurrentPage] = useState(1);
+    const accordionItems = [
+        { title: "First Item", content: <p>This is the content for the first item.</p> },
+        { title: "Second Item", content: <p>This is the content for the second item.</p> },
+        { title: "Third Item", content: <p>This is the content for the third item.</p> }
+    ];
 
     return (
         <div className="demo-page">
@@ -182,9 +225,10 @@ const DemoPage = () => {
             <ToastContainer />
 
             <h2>Accordion</h2>
-            <Accordion title="Click to expand">
-                <p>This is the content inside the accordion.</p>
-            </Accordion>
+        <div className="demo-page">
+            <h2>Accordion</h2>
+            <Accordion items={accordionItems} />
+        </div>
 
             <h2>Pagination</h2>
             <Pagination currentPage={currentPage} totalPages={5} onPageChange={setCurrentPage} />
@@ -216,16 +260,15 @@ const Dropdown = ({ options, selected, onChange }) => {
         <div className="dropdown">
             <button className="dropdown-button" onClick={() => setIsOpen(!isOpen)}>
                 {selected}
+                <span className={`arrow ${isOpen ? 'open' : ''}`}></span>
             </button>
-            {isOpen && (
-                <ul className="dropdown-menu">
-                    {options.map((option, index) => (
-                        <li key={index} onClick={() => handleOptionClick(option)}>
-                            {option}
-                        </li>
-                    ))}
-                </ul>
-            )}
+            <ul className={`dropdown-menu ${isOpen ? 'show' : ''}`}>
+                {options.map((option, index) => (
+                    <li key={index} onClick={() => handleOptionClick(option)}>
+                        {option}
+                    </li>
+                ))}
+            </ul>
         </div>
     );
 };
@@ -555,10 +598,10 @@ import '@testing-library/jest-dom';
 
 
 ==== START OF FILE: src\styles\accordion.css ====
-.accordion {
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    margin-bottom: 10px;
+.accordion-item {
+    border-bottom: 1px solid #ddd;
+    margin: 0;
+    padding: 0;
 }
 
 .accordion-header {
@@ -567,6 +610,12 @@ import '@testing-library/jest-dom';
     background-color: #f7f7f7;
     transition: background-color 0.3s ease;
     position: relative;
+    display: flex;
+    align-items: center;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: left;
+    margin: 0;
 }
 
 .accordion-header:hover {
@@ -574,14 +623,20 @@ import '@testing-library/jest-dom';
 }
 
 .accordion-body {
-    padding: 15px;
+    padding: 0 15px;  /* Remove vertical padding */
     background-color: white;
     border-top: 1px solid #ddd;
+    max-height: 0;
+    overflow: hidden;
     transition: max-height 0.3s ease;
+    margin: 0;
+}
+
+.accordion-body.open {
+    padding: 15px; /* Add padding when open */
 }
 
 .arrow {
-    display: inline-block;
     margin-right: 10px;
     border: solid #007bff;
     border-width: 0 2px 2px 0;
@@ -592,6 +647,10 @@ import '@testing-library/jest-dom';
 
 .arrow.open {
     transform: rotate(-135deg);
+}
+
+.accordion-item:last-child {
+    border-bottom: none;
 }
 
 ==== END OF FILE: src\styles\accordion.css ====
@@ -645,6 +704,8 @@ import '@testing-library/jest-dom';
 .toggle-button:before {
     content: "";
     position: absolute;
+    top: 1px; /* Adjusted to align properly */
+    left: 1px;
     width: 22px;
     height: 22px;
     background-color: white;
@@ -664,6 +725,12 @@ import '@testing-library/jest-dom';
 
 
 ==== START OF FILE: src\styles\dropdown.css ====
+.dropdown {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
 .dropdown-button {
     background-color: #28a745;
     color: white;
@@ -673,12 +740,65 @@ import '@testing-library/jest-dom';
     cursor: pointer;
     width: 100%;
     text-align: left;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+    font-size: 16px;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .dropdown-button:hover {
     background-color: #218838;
     border-color: #218838;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+    margin-top: 5px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+    transition: max-height 0.3s ease, opacity 0.3s ease, visibility 0.3s ease;
+    z-index: 9999;
+}
+
+.dropdown-menu.show {
+    max-height: 300px; /* or an appropriate max height */
+    opacity: 1;
+    visibility: visible;
+}
+
+.dropdown-menu li {
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    list-style: none;
+}
+
+.dropdown-menu li:hover {
+    background-color: #f1f1f1;
+}
+
+.arrow {
+    margin-left: auto; /* Pushes arrow to the far right */
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    padding: 3px;
+    transform: rotate(-45deg); /* Start with the arrow pointing left */
+    transition: transform 0.3s ease;
+}
+
+.arrow.open {
+    transform: rotate(45deg); /* Arrow points down when dropdown is open */
 }
 
 ==== END OF FILE: src\styles\dropdown.css ====
@@ -846,6 +966,10 @@ import '@testing-library/jest-dom';
 .page-item.active {
     background-color: #007bff;
     color: white;
+}
+
+.page-item.active:hover {
+    background-color: #0069d9; /* A lighter blue shade when active and hovered */
 }
 
 .page-item:hover {
