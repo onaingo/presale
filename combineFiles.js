@@ -41,14 +41,14 @@ const combineFiles = () => {
     console.log(`All files have been combined into ${outputPath}`);
     
     // Commit and push changes to Git
-    exec('git add . && git commit -m "Updated flattenedSource.txt" && git push', (err, stdout, stderr) => {
+    exec('git add . && git commit -m "Updated flattenedSource.txt" && git push origin master', (err, stdout, stderr) => {
         if (err) {
             console.error(`Error during Git operations: ${stderr}`);
             return;
         }
         console.log(stdout);
         console.log('Changes committed and pushed to GitHub.');
-    });
+    });    
 };
 
 combineFiles();

@@ -1,7 +1,7 @@
 
 
 ==== START OF FILE: src\App.css ====
-/* TEST */
+/* TEST2 */
 .App {
   text-align: center;
 }
