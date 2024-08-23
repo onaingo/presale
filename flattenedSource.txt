@@ -75,7 +75,6 @@ test('renders learn react link', () => {
 
 
 ==== START OF FILE: src\components\Accordion.js ====
-
 import React, { useState } from 'react';
 import '../styles/accordion.css';
 
@@ -84,7 +83,8 @@ const Accordion = ({ title, children }) => {
 
     return (
         <div className="accordion">
-            <div className="accordion-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }} onClick={(e) => { setIsOpen(!isOpen); e.target.querySelector('.arrow').classList.toggle('open'); }} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }} onClick={(e) => { setIsOpen(!isOpen); e.target.querySelector('.arrow').classList.toggle('open'); }} onClick={() => setIsOpen(!isOpen)}>
+            <div className="accordion-header" onClick={() => setIsOpen(!isOpen)} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span className={`arrow ${isOpen ? 'open' : ''}`}></span>
                 {title}
             </div>
             {isOpen && <div className="accordion-body">{children}</div>}
@@ -98,7 +98,6 @@ export default Accordion;
 
 
 ==== START OF FILE: src\components\Button.js ====
-
 import React from 'react';
 import '../styles/button.css';
 
@@ -116,7 +115,6 @@ export default Button;
 
 
 ==== START OF FILE: src\components\DemoPage.js ====
-
 import React, { useState } from 'react';
 import Button from './Button';
 import Slider from './Slider';
@@ -191,6 +189,9 @@ const DemoPage = () => {
 
             <h2>Pagination</h2>
             <Pagination currentPage={currentPage} totalPages={5} onPageChange={setCurrentPage} />
+
+            <h2>Toggle Button</h2>
+            <div className="toggle-button" onClick={(e) => e.target.classList.toggle('active')}></div>
         </div>
     );
 };
@@ -272,7 +273,6 @@ export default LoadingAnimation;
 
 
 ==== START OF FILE: src\components\Modal.js ====
-
 import React from 'react';
 import '../styles/modal.css';
 
@@ -280,7 +280,7 @@ const Modal = ({ isOpen, title, children, onClose }) => {
     if (!isOpen) return null;
 
     return (
-        <div className="modal-overlay" onClick={onClose}>
+        <div className="modal-overlay" onClick={onClose} style={{ zIndex: 10000 }}>
             <div className="modal" onClick={(e) => e.stopPropagation()}>
                 <div className="modal-header">
                     <h2>{title}</h2>
@@ -567,6 +567,7 @@ import '@testing-library/jest-dom';
     cursor: pointer;
     background-color: #f7f7f7;
     transition: background-color 0.3s ease;
+    position: relative;
 }
 
 .accordion-header:hover {
@@ -577,6 +578,21 @@ import '@testing-library/jest-dom';
     padding: 15px;
     background-color: white;
     border-top: 1px solid #ddd;
+    transition: max-height 0.3s ease;
+}
+
+.arrow {
+    display: inline-block;
+    margin-right: 10px;
+    border: solid #007bff;
+    border-width: 0 2px 2px 0;
+    padding: 5px;
+    transform: rotate(45deg);
+    transition: transform 0.3s ease;
+}
+
+.arrow.open {
+    transform: rotate(-135deg);
 }
 
 ==== END OF FILE: src\styles\accordion.css ====
@@ -589,6 +605,8 @@ import '@testing-library/jest-dom';
     border-radius: 4px;
     cursor: pointer;
     font-size: 16px;
+    font-weight: bold;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
     transition: background-color 0.3s ease, transform 0.1s ease;
 }
 
@@ -611,8 +629,36 @@ import '@testing-library/jest-dom';
 }
 
 .custom-button:active {
-    transform: scale(0.95);
-    background-color: #004085;  /* Darker shade for click down state */
+    transform: scale(0.9);
+    background-color: #004085;
+}
+
+.toggle-button {
+    position: relative;
+    width: 50px;
+    height: 24px;
+    background-color: #ccc;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.toggle-button:before {
+    content: "";
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    background-color: white;
+    border-radius: 50%;
+    transition: transform 0.3s ease;
+}
+
+.toggle-button.active {
+    background-color: #007bff;
+}
+
+.toggle-button.active:before {
+    transform: translateX(26px);
 }
 
 ==== END OF FILE: src\styles\button.css ====
@@ -730,7 +776,7 @@ import '@testing-library/jest-dom';
 
 ==== START OF FILE: src\styles\modal.css ====
 .modal-overlay {
-    z-index: 9999;
+    z-index: 10000;
     position: fixed;
     top: 0;
     left: 0;
@@ -748,6 +794,7 @@ import '@testing-library/jest-dom';
     border-radius: 5px;
     max-width: 500px;
     width: 100%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .modal-header {
@@ -761,37 +808,18 @@ import '@testing-library/jest-dom';
 }
 
 .close-button { 
-    background-color: #dc3545; 
+    background-color: #007bff; 
     border: none; 
     padding: 10px 15px; 
     border-radius: 50%; 
     cursor: pointer; 
     color: white; 
-    transition: 
-    background-color 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .close-button:hover { 
-    background-color: #c82333; 
+    background-color: #0056b3; 
     transform: scale(1.1);
-}
-
-.close-button:hover {
-    background-color: #c82333;
-}
-
-.primary-button {
-    background-color: #007bff;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.primary-button:hover {
-    background-color: #0056b3;
 }
 
 ==== END OF FILE: src\styles\modal.css ====
@@ -802,6 +830,7 @@ import '@testing-library/jest-dom';
     display: flex;
     justify-content: center;
     margin: 20px 0;
+    font-family: 'Roboto', sans-serif;
 }
 
 .page-item {
@@ -811,7 +840,8 @@ import '@testing-library/jest-dom';
     border-radius: 4px;
     background-color: white;
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);
 }
 
 .page-item.active {
@@ -821,6 +851,7 @@ import '@testing-library/jest-dom';
 
 .page-item:hover {
     background-color: #f1f1f1;
+    transform: scale(1.05);
 }
 
 ==== END OF FILE: src\styles\pagination.css ====
