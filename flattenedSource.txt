@@ -180,7 +180,7 @@ const DemoPage = () => {
     ];
 
     return (
-        <div className="demo-page">
+        <div className="wrapper">
             <Header title="Demo UI Components" />
 
             <h2>Buttons</h2>
@@ -225,10 +225,8 @@ const DemoPage = () => {
             <ToastContainer />
 
             <h2>Accordion</h2>
-        <div className="demo-page">
-            <h2>Accordion</h2>
             <Accordion items={accordionItems} />
-        </div>
+
 
             <h2>Pagination</h2>
             <Pagination currentPage={currentPage} totalPages={5} onPageChange={setCurrentPage} />
@@ -598,58 +596,74 @@ import '@testing-library/jest-dom';
 
 
 ==== START OF FILE: src\styles\accordion.css ====
-.accordion-item {
+.accordion .accordion-item {
     border-bottom: 1px solid #ddd;
     margin: 0;
     padding: 0;
+    width: 100%;
+    box-sizing: border-box;
 }
 
-.accordion-header {
+.accordion .accordion-header {
     padding: 15px;
     cursor: pointer;
-    background-color: #f7f7f7;
+    background-color: #f8f9fa; /* Slightly lighter background for better contrast */
     transition: background-color 0.3s ease;
     position: relative;
     display: flex;
+    justify-content: space-between; /* Ensure the arrow is on the far right */
     align-items: center;
     font-size: 18px;
     font-weight: bold;
     text-align: left;
     margin: 0;
+    width: 100%;
+    box-sizing: border-box;
+    border-left: 4px solid transparent; /* Add a left border for accent */
+    transition: border-color 0.3s ease;
 }
 
-.accordion-header:hover {
+.accordion .accordion-header:hover {
     background-color: #e2e2e2;
+    border-left-color: #007bff; /* Highlight the left border on hover */
 }
 
-.accordion-body {
-    padding: 0 15px;  /* Remove vertical padding */
-    background-color: white;
+.accordion .accordion-body {
+    padding: 15px;
+    padding-top: 0px; /* Remove top padding for better spacing */
+    padding-bottom: 15px; /* Add bottom padding for better spacing */
+    background-color: #fff; /* Keep the body white for contrast */
     border-top: 1px solid #ddd;
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.3s ease;
+    transition: max-height 0.3s ease, padding 0.3s ease, opacity 0.3s ease;
+    opacity: 0; /* Start with opacity 0 for smoother transition */
     margin: 0;
+    width: 100%;
+    box-sizing: border-box;
 }
 
-.accordion-body.open {
-    padding: 15px; /* Add padding when open */
+.accordion .accordion-body.open {
+    padding-top: 15px; /* Ensure padding is applied when open */
+    padding-bottom: 15px; /* Add bottom padding when open */
+    opacity: 1; /* Fade in content when open */
 }
 
-.arrow {
-    margin-right: 10px;
+.accordion .arrow {
+    margin-left: auto; /* Push arrow to the far right */
     border: solid #007bff;
     border-width: 0 2px 2px 0;
     padding: 5px;
     transform: rotate(45deg);
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease, border-color 0.3s ease;
 }
 
-.arrow.open {
+.accordion .arrow.open {
     transform: rotate(-135deg);
+    border-color: #0056b3; /* Darker color when open */
 }
 
-.accordion-item:last-child {
+.accordion .accordion-item:last-child {
     border-bottom: none;
 }
 
@@ -666,6 +680,7 @@ import '@testing-library/jest-dom';
     font-weight: bold;
     box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
     transition: background-color 0.3s ease, transform 0.1s ease;
+    width: auto; /* Ensure button doesn't extend beyond content */
 }
 
 .custom-button.primary {
@@ -729,6 +744,7 @@ import '@testing-library/jest-dom';
     position: relative;
     display: inline-block;
     width: 100%;
+    box-sizing: border-box;
 }
 
 .dropdown-button {
@@ -746,6 +762,7 @@ import '@testing-library/jest-dom';
     display: flex;
     justify-content: space-between;
     align-items: center;
+    box-sizing: border-box;
 }
 
 .dropdown-button:hover {
@@ -769,10 +786,11 @@ import '@testing-library/jest-dom';
     visibility: hidden;
     transition: max-height 0.3s ease, opacity 0.3s ease, visibility 0.3s ease;
     z-index: 9999;
+    box-sizing: border-box;
 }
 
 .dropdown-menu.show {
-    max-height: 300px; /* or an appropriate max height */
+    max-height: 300px;
     opacity: 1;
     visibility: visible;
 }
@@ -789,16 +807,16 @@ import '@testing-library/jest-dom';
 }
 
 .arrow {
-    margin-left: auto; /* Pushes arrow to the far right */
+    margin-left: auto;
     border: solid white;
     border-width: 0 2px 2px 0;
     padding: 3px;
-    transform: rotate(-45deg); /* Start with the arrow pointing left */
+    transform: rotate(-45deg);
     transition: transform 0.3s ease;
 }
 
 .arrow.open {
-    transform: rotate(45deg); /* Arrow points down when dropdown is open */
+    transform: rotate(45deg);
 }
 
 ==== END OF FILE: src\styles\dropdown.css ====
@@ -823,20 +841,25 @@ import '@testing-library/jest-dom';
 ==== START OF FILE: src\styles\input.css ====
 .input-group {
     margin-bottom: 15px;
+    width: 100%; /* Ensure the input group takes the full width of its container */
+    box-sizing: border-box; /* Ensure padding and borders are included in the width */
 }
 
 .input-group label {
     display: block;
     margin-bottom: 5px;
     font-weight: bold;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .input-group input {
-    width: 100%;
+    width: 100%; /* Ensure the input field takes the full width of its container */
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
     transition: border-color 0.2s ease;
+    box-sizing: border-box; /* Ensure padding and borders are included in the width */
 }
 
 .input-group input:focus {
@@ -1103,8 +1126,16 @@ body {
     color: #333;
 }
 
+.wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
 .demo-page {
     padding: 20px;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 h1, h2, h3, h4, h5, h6 {
