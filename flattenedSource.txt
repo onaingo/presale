@@ -263,7 +263,11 @@ const Dropdown = ({ options, selected, onChange }) => {
             </button>
             <ul className={`dropdown-menu ${isOpen ? 'show' : ''}`}>
                 {options.map((option, index) => (
-                    <li key={index} onClick={() => handleOptionClick(option)}>
+                    <li
+                        key={index}
+                        onClick={() => handleOptionClick(option)}
+                        className={option === selected ? 'selected' : ''}
+                    >
                         {option}
                     </li>
                 ))}
@@ -440,27 +444,65 @@ export default Slider;
 
 
 ==== START OF FILE: src\components\Tabs.js ====
-import React, { useState } from 'react';
-import '../styles/tabs.css';;
+import React, { useState, useEffect, useRef } from 'react';
+import '../styles/tabs.css';
 
 const Tabs = ({ tabs }) => {
     const [activeTab, setActiveTab] = useState(tabs[0].label);
+    const [content, setContent] = useState(tabs[0].content);
+    const [fadeState, setFadeState] = useState('fade-in');
+    const [lineStyle, setLineStyle] = useState({});
+    const tabRefs = useRef([]);
+
+    useEffect(() => {
+        const activeIndex = tabs.findIndex(tab => tab.label === activeTab);
+        const activeTabRef = tabRefs.current[activeIndex];
+        if (activeTabRef) {
+            const { offsetWidth, offsetLeft } = activeTabRef;
+            setLineStyle({
+                width: `${offsetWidth}px`,
+                left: `${offsetLeft}px`,
+            });
+        }
+    }, [activeTab, tabs]);
+
+    useEffect(() => {
+        if (fadeState === 'fade-out') {
+            const timeout = setTimeout(() => {
+                setContent(tabs.find(tab => tab.label === activeTab).content);
+                setFadeState('fade-in');
+            }, 300); // 300ms delay to match the fade-out duration
+            return () => clearTimeout(timeout);
+        }
+    }, [fadeState, activeTab, tabs]);
+
+    const handleTabClick = (label) => {
+        if (label !== activeTab) {
+            setFadeState('fade-out');
+            setActiveTab(label);
+        }
+    };
 
     return (
         <div className="tabs">
             <div className="tab-headers">
-                {tabs.map((tab) => (
-                    <button 
-                        key={tab.label} 
+                {tabs.map((tab, index) => (
+                    <button
+                        key={tab.label}
                         className={`tab-button ${activeTab === tab.label ? 'active' : ''}`}
-                        onClick={() => setActiveTab(tab.label)}
+                        onClick={() => handleTabClick(tab.label)}
+                        ref={el => tabRefs.current[index] = el}
                     >
                         {tab.label}
                     </button>
                 ))}
+                <div className="active-tab-indicator" style={lineStyle}></div>
             </div>
-            <div className="tab-content">
-                {tabs.find((tab) => tab.label === activeTab)?.content}
+            <div className="tab-content-wrapper">
+                <div className="tab-background"></div>
+                <div className={`tab-content ${fadeState}`}>
+                    {content}
+                </div>
             </div>
         </div>
     );
@@ -762,6 +804,39 @@ import '@testing-library/jest-dom';
     box-shadow: none;
 }
 
+.toggle-button {
+    position: relative;
+    width: 50px;
+    height: 24px;
+    background-color: #ccc;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-sizing: border-box;
+    margin: 20px 0; /* Adding some margin to make sure it doesn't overlap with other elements */
+}
+
+.toggle-button:before {
+    content: "";
+    position: absolute;
+    top: 1px;
+    left: 1px;
+    width: 22px;
+    height: 22px;
+    background-color: white;
+    border-radius: 50%;
+    transition: transform 0.3s ease;
+    box-sizing: border-box;
+}
+
+.toggle-button.active {
+    background-color: #007bff;
+}
+
+.toggle-button.active:before {
+    transform: translateX(26px);
+}
+
 ==== END OF FILE: src\styles\button.css ====
 
 
@@ -774,15 +849,15 @@ import '@testing-library/jest-dom';
 }
 
 .dropdown-button {
-    background-color: #28a745;
-    color: white;
+    background-color: #f7f7f7;
+    color: #333;
     padding: 10px 15px;
-    border: 2px solid #28a745;
-    border-radius: 4px;
+    border: 2px solid #ddd;
+    border-radius: 5px;
     cursor: pointer;
     width: 100%;
     text-align: left;
-    transition: background-color 0.3s ease, border-color 0.3s ease;
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
     font-size: 16px;
     font-weight: bold;
     display: flex;
@@ -792,8 +867,9 @@ import '@testing-library/jest-dom';
 }
 
 .dropdown-button:hover {
-    background-color: #218838;
-    border-color: #218838;
+    background-color: #e2e2e2;
+    border-color: #007bff;
+    color: #007bff;
 }
 
 .dropdown-menu {
@@ -803,7 +879,7 @@ import '@testing-library/jest-dom';
     width: 100%;
     background-color: white;
     border: 1px solid #ddd;
-    border-radius: 4px;
+    border-radius: 5px;
     box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
     margin-top: 5px;
     max-height: 0;
@@ -822,19 +898,31 @@ import '@testing-library/jest-dom';
 }
 
 .dropdown-menu li {
-    padding: 10px;
+    padding: 10px 10px 10px 35px; /* Added padding-left to account for the check mark */
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, color 0.3s ease;
     list-style: none;
+    position: relative; /* To position the check mark */
 }
 
 .dropdown-menu li:hover {
     background-color: #f1f1f1;
+    color: #007bff;
+}
+
+.dropdown-menu li.selected::before {
+    content: '✔'; /* Unicode for check mark */
+    color: #007bff;
+    font-weight: bold;
+    position: absolute;
+    left: 10px; /* Positioning the check mark */
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 .arrow {
     margin-left: auto;
-    border: solid white;
+    border: solid #007bff;
     border-width: 0 2px 2px 0;
     padding: 3px;
     transform: rotate(-45deg);
@@ -1106,12 +1194,21 @@ import '@testing-library/jest-dom';
 ==== START OF FILE: src\styles\tabs.css ====
 .tabs {
     margin: 20px 0;
+    width: 100%;
+    box-sizing: border-box;
+    position: relative;
 }
 
 .tab-headers {
     display: flex;
     justify-content: space-around;
     border-bottom: 2px solid #ddd;
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: #f7f7f7;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
 }
 
 .tab-button {
@@ -1121,23 +1218,71 @@ import '@testing-library/jest-dom';
     padding: 15px;
     cursor: pointer;
     font-size: 16px;
-    transition: background-color 0.3s ease;
+    font-weight: bold;
+    transition: background-color 0.3s ease, color 0.3s ease;
     text-align: center;
+    box-sizing: border-box;
+    position: relative;
 }
 
 .tab-button:hover {
-    background-color: #f1f1f1;
+    background-color: #e2e2e2;
+    color: #007bff;
 }
 
 .tab-button.active {
     color: #007bff;
-    border-bottom: 2px solid #007bff;
     background-color: #e9ecef;
 }
 
-.tab-content {
-    padding: 20px;
+.active-tab-indicator {
+    position: absolute;
+    bottom: -2px;
+    height: 2px;
+    background-color: #007bff;
+    transition: width 0.3s ease, left 0.3s ease;
+    width: 0;
+    left: 0;
+}
+
+.tab-content-wrapper {
+    position: relative;
     background-color: #f8f9fa;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    border-radius: 0 0 5px 5px;
+    box-sizing: border-box;
+    padding: 20px;
+    overflow: hidden;
+}
+
+.tab-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #f8f9fa;
+    z-index: 0;
+}
+
+.tab-content {
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 20px;
+    transition: opacity 0.3s ease;
+    opacity: 1;
+    z-index: 1;
+}
+
+.tab-content.fade-in {
+    opacity: 1;
+}
+
+.tab-content.fade-out {
+    opacity: 0;
 }
 
 ==== END OF FILE: src\styles\tabs.css ====
