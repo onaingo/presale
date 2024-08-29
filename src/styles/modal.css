@@ -1,0 +1,54 @@
+.modal-overlay {
+    z-index: 10000;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7); /* Slightly darker for more focus on the modal */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(5px); /* Optional blur effect for the background */
+}
+
+.modal {
+    background: #fff;
+    padding: 30px; /* Increased padding for a more spacious feel */
+    border-radius: 10px; /* Softer rounded corners */
+    max-width: 600px; /* Increased width for a more prominent modal */
+    width: 100%;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* More prominent shadow */
+    position: relative; /* For the close button */
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #ddd; /* Subtle separation between header and body */
+    padding-bottom: 10px;
+}
+
+.modal-body {
+    margin-top: 20px;
+}
+
+.close-button { 
+    background-color: #ff5c5c; /* Softer red for a less harsh feel */
+    border: none; 
+    padding: 10px;
+    border-radius: 50%; 
+    cursor: pointer; 
+    color: white; 
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.close-button:hover { 
+    background-color: #e74c3c; 
+    transform: scale(1.1);
+}

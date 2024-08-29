@@ -1,0 +1,95 @@
+.accordion-item {
+    border-bottom: 1px solid #ddd;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    box-sizing: border-box;
+    position: relative;
+}
+
+/* Rounded corners for the topmost accordion */
+.accordion-item:first-child .accordion-header {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+/* Rounded corners for the bottommost accordion */
+.accordion-item:last-child .accordion-body.open {
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.accordion-header {
+    padding: 15px;
+    cursor: pointer;
+    background-color: #f7f7f7;
+    transition: background-color 0.3s ease;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: left;
+    margin: 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.accordion-header:hover {
+    background-color: #e2e2e2;
+}
+
+/* Blue design element */
+.accordion-header::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 5px;
+    background-color: #007bff;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.accordion-header:hover::before {
+    opacity: 1;
+}
+
+.accordion-body {
+    padding: 0 15px;
+    background-color: white;
+    border-top: 1px solid #ddd;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s ease, opacity 0.3s ease;
+    margin: 0;
+    width: 100%;
+    box-sizing: border-box;
+    opacity: 0; /* Start with 0 opacity for smooth transition */
+}
+
+.accordion-body.open {
+    padding: 15px;
+    opacity: 1; /* Ensure content fades in smoothly */
+    min-height: 80px; /* Ensure a minimum height of 80px */
+}
+
+.arrow {
+    margin-left: auto;
+    border: solid #007bff;
+    border-width: 0 2px 2px 0;
+    padding: 5px;
+    transform: rotate(45deg);
+    transition: transform 0.3s ease;
+}
+
+.arrow.open {
+    transform: rotate(-135deg);
+}
+
+/* Remove border on the last child */
+.accordion-item:last-child {
+    border-bottom: none;
+}

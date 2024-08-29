@@ -1,0 +1,45 @@
+import React from 'react';
+import { useParams } from 'react-router-dom'; 
+import VideoPlaceholder from '../components/VideoPlaceholder';
+import Tabs from '../components/Tabs';
+import SwapInterface from '../components/SwapInterface';
+import ConnectWalletButton from '../components/ConnectWalletButton';
+import './mainPage.css';
+
+const MainPage = () => {
+    const { seqid } = useParams(); // Get the seqid from the URL
+    const handleWalletConnect = (account) => {
+        console.log('Connected to account:', account);
+    };
+
+    return (
+        <div className="main-page">
+            <div className="content-wrapper">
+                <div className="left-section">
+                    <VideoPlaceholder seqid={seqid} />
+                </div>
+                <div className="right-section">
+                    <ConnectWalletButton onConnect={handleWalletConnect} />
+                    <Tabs
+                        tabs={[
+                            {
+                                label: 'Swap',
+                                content: <SwapInterface seqid={seqid} />,
+                            },
+                            {
+                                label: 'Pool',
+                                content: <div>Add Liquidity Content</div>,
+                            },
+                            {
+                                label: 'Earn',
+                                content: <div>Lock LP Content</div>,
+                            },
+                        ]}
+                    />
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default MainPage;

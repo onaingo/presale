@@ -1,0 +1,3670 @@
+==== FILE STRUCTURE ====
+.env
+.gitattributes
+.gitignore
+.gitignore_OLD
+combine.js
+compiled_code.txt
+config-overrides.js
+exportStructure.js
+internal_scripts/
+  fix.js
+  structure.txt
+package.json
+README.md
+scripts/
+  readFs.js
+  writeFs.js
+src/
+  App.css
+  App.js
+  App.test.js
+  components/
+    Accordion.js
+    Button.js
+    ConnectWalletButton.js
+    Dropdown.js
+    Header.js
+    LoadingAnimation.js
+    Modal.js
+    Pagination.js
+    ProgressBar.js
+    Slider.js
+    SwapInterface.js
+    Tabs.js
+    TextInput.js
+    Toast.js
+    Tooltip.js
+    VideoPlaceholder.js
+    VideoPlayer.js
+    WalletConnectButton.js
+  contexts/
+    WalletContext.js
+  index.css
+  index.js
+  logo.svg
+  NFT-videos/
+    Y1.mp4
+  pages/
+    demoPage.css
+    DemoPage.js
+    mainPage.css
+    MainPage.js
+    RefreshPage.js
+  redux/
+    fnftSlice.js
+    store.js
+    walletSlice.js
+  reportWebVitals.js
+  services/
+    fnftService.js
+  setupTests.js
+  styles/
+    accordion.css
+    button.css
+    connectWalletButton.css
+    dropdown.css
+    header.css
+    input.css
+    loadingAnimation.css
+    modal.css
+    pagination.css
+    progressBar.css
+    slider.css
+    swapInterface.css
+    tabs.css
+    theme.css
+    toast.css
+    tooltip.css
+    videoPlaceholder.css
+    videoPlayer.css
+    walletConnectButton.css
+yarn.lock
+
+==== CODE ====
+
+==== START OF FILE: .env ====
+ALCHEMY_API_KEY=GXSpgpC-Ys9j06-f8vIu-OxBR0AjhAmZ
+PRIVATE_KEY=099f26a47453b9ceb726344ed1928fd4e7c16e800febdc1b38a5eac181a31731
+VAULT_ADDRESS=0x9FEC9c8315dA365a301F9Fe4DedF446191B3a21e
+==== END OF FILE: .env ====
+
+==== START OF FILE: .gitattributes ====
+* text=auto
+==== END OF FILE: .gitattributes ====
+
+==== START OF FILE: .gitignore ====
+echo "/*" > .gitignore
+echo "!/flattenedSource.txt" >> .gitignore
+node_modules
+
+==== END OF FILE: .gitignore ====
+
+==== START OF FILE: .gitignore_OLD ====
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/internal_scripts
+
+# production
+/build
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+==== END OF FILE: .gitignore_OLD ====
+
+==== START OF FILE: combine.js ====
+const fs = require('fs');
+const path = require('path');
+
+// Files and folders to ignore
+const ignoredDirectories = ['node_modules', 'dist', '.git', 'public', 'images', 'videos'];
+const ignoredFiles = ['package-lock.json', 'yarn.lock'];
+
+const outputFile = 'compiled_code.txt';
+
+// Helper function to get all files in a directory recursively
+const getAllFiles = (dirPath, arrayOfFiles) => {
+    const files = fs.readdirSync(dirPath);
+
+    arrayOfFiles = arrayOfFiles || [];
+
+    files.forEach(file => {
+        if (fs.statSync(path.join(dirPath, file)).isDirectory()) {
+            if (!ignoredDirectories.includes(file)) {
+                arrayOfFiles = getAllFiles(path.join(dirPath, file), arrayOfFiles);
+            }
+        } else {
+            if (!ignoredFiles.includes(file) && !file.endsWith('.png') && !file.endsWith('.jpg') && !file.endsWith('.webp') && !file.endsWith('.mp4')) {
+                arrayOfFiles.push(path.join(dirPath, file));
+            }
+        }
+    });
+
+    return arrayOfFiles;
+};
+
+// Helper function to write the file structure
+const writeFileStructure = (dirPath, prefix = '') => {
+    const entries = fs.readdirSync(dirPath, { withFileTypes: true });
+
+    entries.forEach(entry => {
+        if (ignoredDirectories.includes(entry.name)) return;
+
+        const fullPath = path.join(dirPath, entry.name);
+        const isDirectory = entry.isDirectory();
+
+        fs.appendFileSync(outputFile, `${prefix}${entry.name}${isDirectory ? '/' : ''}\n`);
+
+        if (isDirectory) {
+            writeFileStructure(fullPath, prefix + '  ');
+        }
+    });
+};
+
+// Function to combine all files into a single text file
+const compileCode = () => {
+    const rootPath = path.join(__dirname);
+    const files = getAllFiles(rootPath);
+
+    // Clear the output file
+    fs.writeFileSync(outputFile, '');
+
+    // Write the file structure
+    fs.appendFileSync(outputFile, '==== FILE STRUCTURE ====\n');
+    writeFileStructure(rootPath);
+    fs.appendFileSync(outputFile, '\n==== CODE ====\n');
+
+    // Combine all file contents
+    files.forEach(file => {
+        const fileContent = fs.readFileSync(file, 'utf8');
+        const relativePath = path.relative(__dirname, file);
+
+        fs.appendFileSync(outputFile, `\n==== START OF FILE: ${relativePath} ====\n`);
+        fs.appendFileSync(outputFile, fileContent);
+        fs.appendFileSync(outputFile, `\n==== END OF FILE: ${relativePath} ====\n`);
+    });
+
+    console.log(`All files have been compiled into ${outputFile}`);
+};
+
+compileCode();
+
+==== END OF FILE: combine.js ====
+
+==== START OF FILE: compiled_code.txt ====
+==== FILE STRUCTURE ====
+.env
+.gitattributes
+.gitignore
+.gitignore_OLD
+combine.js
+compiled_code.txt
+config-overrides.js
+exportStructure.js
+internal_scripts/
+  fix.js
+  structure.txt
+package.json
+README.md
+scripts/
+  readFs.js
+  writeFs.js
+src/
+  App.css
+  App.js
+  App.test.js
+  components/
+    Accordion.js
+    Button.js
+    ConnectWalletButton.js
+    Dropdown.js
+    Header.js
+    LoadingAnimation.js
+    Modal.js
+    Pagination.js
+    ProgressBar.js
+    Slider.js
+    SwapInterface.js
+    Tabs.js
+    TextInput.js
+    Toast.js
+    Tooltip.js
+    VideoPlaceholder.js
+    VideoPlayer.js
+    WalletConnectButton.js
+  contexts/
+    WalletContext.js
+  index.css
+  index.js
+  logo.svg
+  NFT-videos/
+    Y1.mp4
+  pages/
+    demoPage.css
+    DemoPage.js
+    mainPage.css
+    MainPage.js
+    RefreshPage.js
+  redux/
+    fnftSlice.js
+    store.js
+    walletSlice.js
+  reportWebVitals.js
+  services/
+    fnftService.js
+  setupTests.js
+  styles/
+    accordion.css
+    button.css
+    connectWalletButton.css
+    dropdown.css
+    header.css
+    input.css
+    loadingAnimation.css
+    modal.css
+    pagination.css
+    progressBar.css
+    slider.css
+    swapInterface.css
+    tabs.css
+    theme.css
+    toast.css
+    tooltip.css
+    videoPlaceholder.css
+    videoPlayer.css
+    walletConnectButton.css
+yarn.lock
+
+==== CODE ====
+
+==== START OF FILE: .env ====
+ALCHEMY_API_KEY=GXSpgpC-Ys9j06-f8vIu-OxBR0AjhAmZ
+PRIVATE_KEY=099f26a47453b9ceb726344ed1928fd4e7c16e800febdc1b38a5eac181a31731
+VAULT_ADDRESS=0x9FEC9c8315dA365a301F9Fe4DedF446191B3a21e
+==== END OF FILE: .env ====
+
+==== START OF FILE: .gitattributes ====
+* text=auto
+==== END OF FILE: .gitattributes ====
+
+==== START OF FILE: .gitignore ====
+echo "/*" > .gitignore
+echo "!/flattenedSource.txt" >> .gitignore
+node_modules
+
+==== END OF FILE: .gitignore ====
+
+==== START OF FILE: .gitignore_OLD ====
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/internal_scripts
+
+# production
+/build
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+==== END OF FILE: .gitignore_OLD ====
+
+==== START OF FILE: combine.js ====
+const fs = require('fs');
+const path = require('path');
+
+// Files and folders to ignore
+const ignoredDirectories = ['node_modules', 'dist', '.git', 'public', 'images', 'videos'];
+const ignoredFiles = ['package-lock.json', 'yarn.lock'];
+
+const outputFile = 'compiled_code.txt';
+
+// Helper function to get all files in a directory recursively
+const getAllFiles = (dirPath, arrayOfFiles) => {
+    const files = fs.readdirSync(dirPath);
+
+    arrayOfFiles = arrayOfFiles || [];
+
+    files.forEach(file => {
+        if (fs.statSync(path.join(dirPath, file)).isDirectory()) {
+            if (!ignoredDirectories.includes(file)) {
+                arrayOfFiles = getAllFiles(path.join(dirPath, file), arrayOfFiles);
+            }
+        } else {
+            if (!ignoredFiles.includes(file) && !file.endsWith('.png') && !file.endsWith('.jpg') && !file.endsWith('.webp') && !file.endsWith('.mp4')) {
+                arrayOfFiles.push(path.join(dirPath, file));
+            }
+        }
+    });
+
+    return arrayOfFiles;
+};
+
+// Helper function to write the file structure
+const writeFileStructure = (dirPath, prefix = '') => {
+    const entries = fs.readdirSync(dirPath, { withFileTypes: true });
+
+    entries.forEach(entry => {
+        if (ignoredDirectories.includes(entry.name)) return;
+
+        const fullPath = path.join(dirPath, entry.name);
+        const isDirectory = entry.isDirectory();
+
+        fs.appendFileSync(outputFile, `${prefix}${entry.name}${isDirectory ? '/' : ''}\n`);
+
+        if (isDirectory) {
+            writeFileStructure(fullPath, prefix + '  ');
+        }
+    });
+};
+
+// Function to combine all files into a single text file
+const compileCode = () => {
+    const rootPath = path.join(__dirname);
+    const files = getAllFiles(rootPath);
+
+    // Clear the output file
+    fs.writeFileSync(outputFile, '');
+
+    // Write the file structure
+    fs.appendFileSync(outputFile, '==== FILE STRUCTURE ====\n');
+    writeFileStructure(rootPath);
+    fs.appendFileSync(outputFile, '\n==== CODE ====\n');
+
+    // Combine all file contents
+    files.forEach(file => {
+        const fileContent = fs.readFileSync(file, 'utf8');
+        const relativePath = path.relative(__dirname, file);
+
+        fs.appendFileSync(outputFile, `\n==== START OF FILE: ${relativePath} ====\n`);
+        fs.appendFileSync(outputFile, fileContent);
+        fs.appendFileSync(outputFile, `\n==== END OF FILE: ${relativePath} ====\n`);
+    });
+
+    console.log(`All files have been compiled into ${outputFile}`);
+};
+
+compileCode();
+
+==== END OF FILE: combine.js ====
+
+==== END OF FILE: compiled_code.txt ====
+
+==== START OF FILE: config-overrides.js ====
+const { override, addWebpackPlugin } = require('customize-cra');
+const webpack = require('webpack');
+
+module.exports = override(
+  // Other overrides
+  addWebpackPlugin(
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
+    })
+  ),
+  // Update devServer configuration
+  (config) => {
+    if (config.devServer) {
+      config.devServer.setupMiddlewares = (middlewares, devServer) => {
+        // You can add custom middleware here if needed
+        // Example: middlewares.push(yourCustomMiddleware);
+        return middlewares;
+      };
+      delete config.devServer.onAfterSetupMiddleware;
+      delete config.devServer.onBeforeSetupMiddleware;
+    }
+    return config;
+  }
+);
+
+==== END OF FILE: config-overrides.js ====
+
+==== START OF FILE: exportStructure.js ====
+const fs = require('fs');
+const path = require('path');
+
+const outputFile = 'structure.txt';
+
+const ignoredDirectories = ['node_modules', '.git'];
+
+const getDirectoryStructure = (dir, prefix = '') => {
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+
+    entries.forEach((entry) => {
+        const fullPath = path.join(dir, entry.name);
+        const isDirectory = entry.isDirectory();
+
+        if (!ignoredDirectories.includes(entry.name)) {
+            const formattedEntry = `${prefix}${entry.name}${isDirectory ? '/' : ''}`;
+            fs.appendFileSync(outputFile, formattedEntry + '\n');
+
+            if (isDirectory) {
+                getDirectoryStructure(fullPath, prefix + '  ');
+            }
+        }
+    });
+};
+
+const startDirectory = path.resolve(__dirname);
+fs.writeFileSync(outputFile, ''); // Clear the file if it already exists
+getDirectoryStructure(startDirectory);
+
+console.log(`Directory structure has been exported to ${outputFile}`);
+
+==== END OF FILE: exportStructure.js ====
+
+==== START OF FILE: internal_scripts\fix.js ====
+const fs = require('fs');
+const path = require('path');
+const { exec } = require('child_process');
+
+// Install necessary plugins
+exec('npm install animate.css framer-motion @mui/material @emotion/react @emotion/styled', (err, stdout, stderr) => {
+    if (err) {
+        console.error(`Error installing plugins: ${stderr}`);
+        return;
+    }
+    console.log(stdout);
+    console.log('Plugins installed successfully.');
+
+    // Helper function to update file content efficiently
+    const updateFile = (filePath, searchValue, replaceValue) => {
+        if (!fs.existsSync(filePath)) return;
+        let content = fs.readFileSync(filePath, 'utf8');
+        if (content.includes(searchValue)) {
+            content = content.replace(searchValue, replaceValue);
+            fs.writeFileSync(filePath, content, 'utf8');
+            console.log(`Updated: ${filePath}`);
+        }
+    };
+
+    // Demo Modal Enhancements
+    updateFile(
+        './src/components/Modal.js',
+        `className="close-button"`,
+        `className="close-button custom-button secondary"`
+    );
+    updateFile(
+        './src/components/Modal.js',
+        `<div className="modal-overlay">`,
+        `<div className="modal-overlay" onClick={onClose}><div className="modal" onClick={(e) => e.stopPropagation()} style={{ animation: "fadeIn 0.5s" }}>`
+    );
+    updateFile(
+        './src/styles/modal.css',
+        `.modal-overlay {`,
+        `.modal-overlay { z-index: 9999; background-color: rgba(0, 0, 0, 0.7); }`
+    );
+    updateFile(
+        './src/styles/modal.css',
+        `.close-button {`,
+        `.close-button { background-color: #dc3545; border: none; padding: 10px 15px; border-radius: 50%; cursor: pointer; color: white; transition: background-color 0.3s ease; }`
+    );
+    updateFile(
+        './src/styles/modal.css',
+        `.close-button:hover {`,
+        `.close-button:hover { background-color: #c82333; transform: scale(1.1); }`
+    );
+
+    // Button Enhancements with Plugin
+    updateFile(
+        './src/components/Button.js',
+        `className={\`custom-button \${type}\`}`,
+        `className={\`custom-button \${type} animate__animated animate__pulse\`}`
+    );
+
+    // Accordion Animation and Arrow
+    updateFile(
+        './src/components/Accordion.js',
+        `className="accordion-header"`,
+        `className="accordion-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }} onClick={(e) => { setIsOpen(!isOpen); e.target.querySelector('.arrow').classList.toggle('open'); }}`
+    );
+    updateFile(
+        './src/components/Accordion.js',
+        `</div>`,
+        `<span className="arrow ${isOpen ? 'open' : ''}">&#9660;</span></div>`
+    );
+    updateFile(
+        './src/styles/accordion.css',
+        `.accordion-body {`,
+        `.accordion-body { transition: max-height 0.5s ease-in-out; overflow: hidden; max-height: ${isOpen ? '100px' : '0'}; }`
+    );
+    updateFile(
+        './src/styles/accordion.css',
+        `.arrow {`,
+        `.arrow { transition: transform 0.3s ease; } .arrow.open { transform: rotate(-180deg); }`
+    );
+
+    // Toggle Button with Animation
+    const toggleButtonJs = `
+import React, { useState } from 'react';
+import '../styles/toggleButton.css';
+import { motion } from 'framer-motion';
+
+const ToggleButton = () => {
+    const [isOn, setIsOn] = useState(false);
+    return (
+        <motion.div 
+            className="toggle-button" 
+            onClick={() => setIsOn(!isOn)}
+            whileTap={{ scale: 0.9 }}
+            initial={{ backgroundColor: isOn ? '#28a745' : '#dc3545' }}
+            animate={{ backgroundColor: isOn ? '#28a745' : '#dc3545' }}
+        >
+            <motion.div 
+                className={\`knob \${isOn ? 'on' : 'off'}\`} 
+                layout
+                transition={{ type: "spring", stiffness: 700, damping: 30 }}
+            />
+        </motion.div>
+    );
+};
+
+export default ToggleButton;
+`;
+    const toggleButtonCss = `
+.toggle-button { width: 60px; height: 30px; border-radius: 15px; position: relative; cursor: pointer; }
+.knob { width: 28px; height: 28px; background-color: white; border-radius: 50%; position: absolute; top: 1px; }
+.knob.on { left: 30px; }
+.knob.off { left: 2px; }
+`;
+    fs.writeFileSync('./src/components/ToggleButton.js', toggleButtonJs);
+    fs.writeFileSync('./src/styles/toggleButton.css', toggleButtonCss);
+
+    // Pagination Enhancements with Plugin Animation
+    updateFile(
+        './src/components/Pagination.js',
+        `className={\`page-item \${page === currentPage ? 'active' : ''}\`}`,
+        `className={\`page-item \${page === currentPage ? 'active animate__animated animate__heartBeat' : ''}\`}`
+    );
+    updateFile(
+        './src/styles/pagination.css',
+        `.page-item {`,
+        `.page-item { background-color: #007bff; color: white; padding: 10px 15px; border: 2px solid #007bff; border-radius: 4px; cursor: pointer; transition: background-color 0.3s ease; } .page-item:hover { background-color: #0056b3; border-color: #0056b3; }`
+    );
+
+    console.log('All updates applied successfully.');
+});
+
+==== END OF FILE: internal_scripts\fix.js ====
+
+==== START OF FILE: internal_scripts\structure.txt ====
+.gitattributes
+.gitignore
+.gitignore_OLD
+combineFiles.js
+exportStructure.js
+fix.js
+flattenedSource.txt
+package-lock.json
+package.json
+public/
+  favicon.ico
+  index.html
+  logo192.png
+  logo512.png
+  manifest.json
+  robots.txt
+README.md
+src/
+  App.css
+  App.js
+  App.test.js
+  components/
+    Accordion.js
+    Button.js
+    DemoPage.js
+    DemoPage_demo.js
+    Dropdown.js
+    Header.js
+    LoadingAnimation.js
+    MainPage.js
+    Modal.js
+    Pagination.js
+    ProgressBar.js
+    Slider.js
+    swapInterface.js
+    Tabs.js
+    TextInput.js
+    Toast.js
+    Tooltip.js
+    VideoPlaceholder.js
+    VideoPlayer.js
+  images/
+    RED_WHALE_LOGO.webp
+  index.css
+  index.js
+  logo.svg
+  reportWebVitals.js
+  setupTests.js
+  styles/
+    accordion.css
+    button.css
+    demoPage.css
+    dropdown.css
+    header.css
+    input.css
+    loadingAnimation.css
+    mainPage.css
+    modal.css
+    pagination.css
+    progressBar.css
+    slider.css
+    swapInterface.css
+    tabs.css
+    theme.css
+    toast.css
+    tooltip.css
+    videoPlaceholder.css
+    videoPlayer.css
+structure.txt
+
+==== END OF FILE: internal_scripts\structure.txt ====
+
+==== START OF FILE: package.json ====
+{
+  "name": "my-dapp-ui",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@emotion/react": "^11.13.3",
+    "@emotion/styled": "^11.13.0",
+    "@ethersproject/address": "^5.0.0-beta",
+    "@ethersproject/contracts": "^5.0.0-beta",
+    "@ethersproject/networks": "^5.0.0-beta",
+    "@ethersproject/providers": "^5.7.2",
+    "@ethersproject/solidity": "^5.0.0-beta",
+    "@mui/material": "^5.16.7",
+    "@rainbow-me/rainbowkit": "^2.1.5",
+    "@react-spring/web": "^9.7.4",
+    "@reduxjs/toolkit": "^2.2.7",
+    "@tanstack/query-core": "^5.52.0",
+    "@tanstack/react-query": "^5.52.1",
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "@uniswap/sdk": "^3.0.3",
+    "@uniswap/sdk-core": "^5.3.1",
+    "@uniswap/v3-sdk": "^3.13.1",
+    "ajv": "^8.11.0",
+    "ajv-keywords": "^5.1.0",
+    "animate.css": "^4.1.1",
+    "assert": "^2.1.0",
+    "axios": "^1.7.5",
+    "browserify-zlib": "^0.2.0",
+    "buffer": "^6.0.3",
+    "crypto-browserify": "^3.12.0",
+    "customize-cra": "^1.0.0",
+    "dotenv": "^16.4.5",
+    "ethers": "^6.13.2",
+    "framer-motion": "^11.3.30",
+    "https-browserify": "^1.0.0",
+    "os-browserify": "^0.3.0",
+    "process": "^0.11.10",
+    "react": "^18.3.1",
+    "react-app-rewired": "^2.2.1",
+    "react-dom": "^18.3.1",
+    "react-hook-form": "^7.53.0",
+    "react-redux": "^9.1.2",
+    "react-router-dom": "^6.26.1",
+    "react-scripts": "^5.0.1",
+    "react-spinners": "^0.14.1",
+    "react-toastify": "^10.0.5",
+    "readable-stream": "^4.5.2",
+    "redux": "^5.0.1",
+    "redux-logger": "^3.0.6",
+    "redux-persist": "^6.0.0",
+    "stream-browserify": "^3.0.0",
+    "stream-http": "^3.2.0",
+    "styled-components": "^6.1.12",
+    "url": "^0.11.4",
+    "util": "^0.12.5",
+    "viem": "^2.20.0",
+    "wagmi": "^2.12.7",
+    "web-vitals": "^2.1.4",
+    "webpack": "^5.94.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^5.0.4"
+  },
+  "scripts": {
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "typescript": "^5.5.4"
+  },
+  "resolutions": {
+    "process": "^0.11.10"
+  }
+}
+
+==== END OF FILE: package.json ====
+
+==== START OF FILE: README.md ====
+# Getting Started with Create React App
+
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
+## Available Scripts
+
+In the project directory, you can run:
+
+### `npm start`
+
+Runs the app in the development mode.\
+Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+
+The page will reload when you make changes.\
+You may also see any lint errors in the console.
+
+### `npm test`
+
+Launches the test runner in the interactive watch mode.\
+See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+
+### `npm run build`
+
+Builds the app for production to the `build` folder.\
+It correctly bundles React in production mode and optimizes the build for the best performance.
+
+The build is minified and the filenames include the hashes.\
+Your app is ready to be deployed!
+
+See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+
+### `npm run eject`
+
+**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+
+If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+
+Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+
+You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+
+## Learn More
+
+You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+
+To learn React, check out the [React documentation](https://reactjs.org/).
+
+### Code Splitting
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+
+### Analyzing the Bundle Size
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+
+### Making a Progressive Web App
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+
+### Advanced Configuration
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+
+### Deployment
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+
+### `npm run build` fails to minify
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+==== END OF FILE: README.md ====
+
+==== START OF FILE: scripts\readFs.js ====
+require('dotenv').config({ path: '../.env' }); // Load environment variables from .env
+const { ethers } = require('ethers');
+
+// Check if PRIVATE_KEY is loaded correctly
+if (!process.env.PRIVATE_KEY) {
+    console.error('Private Key is missing or not loaded correctly from the .env file');
+    process.exit(1);
+}
+
+const provider = new ethers.JsonRpcProvider(`https://eth-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`);
+const wallet = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
+
+const vaultAddress = process.env.VAULT_ADDRESS;
+
+const abi = [
+    {
+        "inputs": [],
+        "name": "name",
+        "outputs": [{"internalType": "string","name":"","type":"string"}],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "symbol",
+        "outputs": [{"internalType": "string","name":"","type":"string"}],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "token",
+        "outputs": [{"internalType": "address","name":"","type":"address"}],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "totalSupply",
+        "outputs": [{"internalType": "uint256","name":"","type":"uint256"}],
+        "stateMutability": "view",
+        "type": "function"
+    }
+];
+
+const vaultContract = new ethers.Contract(vaultAddress, abi, wallet);
+
+// Function to get token name
+async function getTokenName() {
+    try {
+        const name = await vaultContract.name();
+        console.log('Token Name:', name);
+    } catch (error) {
+        console.error('Error retrieving token name:', error);
+    }
+}
+
+// Function to get token symbol
+async function getTokenSymbol() {
+    try {
+        const symbol = await vaultContract.symbol();
+        console.log('Token Symbol:', symbol);
+    } catch (error) {
+        console.error('Error retrieving token symbol:', error);
+    }
+}
+
+// Function to get token address
+async function getTokenAddress() {
+    try {
+        const tokenAddress = await vaultContract.token();
+        console.log('NFT Token Address:', tokenAddress);
+    } catch (error) {
+        console.error('Error retrieving token address:', error);
+    }
+}
+
+// Function to get total supply
+async function getTotalSupply() {
+    try {
+        const totalSupply = await vaultContract.totalSupply();
+        const formattedTotalSupply = ethers.utils.formatUnits(totalSupply, 18); // Divide by 10^18
+        console.log('Total Supply:', formattedTotalSupply);
+    } catch (error) {
+        console.error('Error retrieving total supply:', error);
+    }
+}
+
+
+// Function to execute based on command-line flag
+function executeFunction(flag) {
+    switch(flag) {
+        case '--name':
+            getTokenName();
+            break;
+        case '--symbol':
+            getTokenSymbol();
+            break;
+        case '--token':
+            getTokenAddress();
+            break;
+        case '--totalSupply':
+            getTotalSupply();
+            break;
+        default:
+            console.error('Unknown flag:', flag);
+            console.log('Available flags: --name, --symbol, --token, --totalSupply'); // List available flags
+    }
+}
+
+// Get the command-line flag (e.g., "--name")
+const flag = process.argv[2];
+if (flag) {
+    executeFunction(flag);
+} else {
+    console.error('Please provide a flag to indicate which function to run.');
+    console.log('Available flags: --name, --symbol, --token, --totalSupply'); // List available flags
+}
+
+==== END OF FILE: scripts\readFs.js ====
+
+==== START OF FILE: scripts\writeFs.js ====
+require('dotenv').config({ path: '../.env' }); // Load environment variables from .env
+const { ethers } = require('ethers');
+
+// Check if PRIVATE_KEY is loaded correctly
+if (!process.env.PRIVATE_KEY) {
+    console.error('Private Key is missing or not loaded correctly from the .env file');
+    process.exit(1);
+}
+
+const provider = new ethers.JsonRpcProvider(`https://eth-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`);
+const wallet = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
+
+const vaultAddress = process.env.VAULT_ADDRESS;
+
+const abi = [
+    {
+        "inputs": [],
+        "name": "name",
+        "outputs": [{"internalType": "string","name":"","type":"string"}],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "symbol",
+        "outputs": [{"internalType": "string","name":"","type":"string"}],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "token",
+        "outputs": [{"internalType": "address","name":"","type":"address"}],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "totalSupply",
+        "outputs": [{"internalType": "uint256","name":"","type":"uint256"}],
+        "stateMutability": "view",
+        "type": "function"
+    }
+];
+
+const vaultContract = new ethers.Contract(vaultAddress, abi, wallet);
+
+// Function to get token name
+async function getTokenName() {
+    try {
+        const name = await vaultContract.name();
+        console.log('Token Name:', name);
+    } catch (error) {
+        console.error('Error retrieving token name:', error);
+    }
+}
+
+// Function to get token symbol
+async function getTokenSymbol() {
+    try {
+        const symbol = await vaultContract.symbol();
+        console.log('Token Symbol:', symbol);
+    } catch (error) {
+        console.error('Error retrieving token symbol:', error);
+    }
+}
+
+// Function to get token address
+async function getTokenAddress() {
+    try {
+        const tokenAddress = await vaultContract.token();
+        console.log('NFT Token Address:', tokenAddress);
+    } catch (error) {
+        console.error('Error retrieving token address:', error);
+    }
+}
+
+// Function to get total supply
+async function getTotalSupply() {
+    try {
+        const totalSupply = await vaultContract.totalSupply();
+        const formattedTotalSupply = ethers.utils.formatUnits(totalSupply, 18); // Divide by 10^18
+        console.log('Total Supply:', formattedTotalSupply);
+    } catch (error) {
+        console.error('Error retrieving total supply:', error);
+    }
+}
+
+
+// Function to execute based on command-line flag
+function executeFunction(flag) {
+    switch(flag) {
+        case '--name':
+            getTokenName();
+            break;
+        case '--symbol':
+            getTokenSymbol();
+            break;
+        case '--token':
+            getTokenAddress();
+            break;
+        case '--totalSupply':
+            getTotalSupply();
+            break;
+        default:
+            console.error('Unknown flag:', flag);
+            console.log('Available flags: --name, --symbol, --token, --totalSupply'); // List available flags
+    }
+}
+
+// Get the command-line flag (e.g., "--name")
+const flag = process.argv[2];
+if (flag) {
+    executeFunction(flag);
+} else {
+    console.error('Please provide a flag to indicate which function to run.');
+    console.log('Available flags: --name, --symbol, --token, --totalSupply'); // List available flags
+}
+
+==== END OF FILE: scripts\writeFs.js ====
+
+==== START OF FILE: src\App.css ====
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+==== END OF FILE: src\App.css ====
+
+==== START OF FILE: src\App.js ====
+import React from 'react';
+import MainPage from './pages/MainPage';
+import RefreshPage from './pages/RefreshPage'; // Import the new RefreshPage component
+import { WalletProvider } from './contexts/WalletContext';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+
+function App() {
+    return (
+        <WalletProvider>
+            <Router>
+                <div className="App">
+                    <Routes>
+                        <Route path="/" element={<MainPage />} />
+                        <Route path="/refresh" element={<RefreshPage />} />
+                    </Routes>
+                </div>
+            </Router>
+        </WalletProvider>
+    );
+}
+
+export default App;
+
+==== END OF FILE: src\App.js ====
+
+==== START OF FILE: src\App.test.js ====
+import { render, screen } from '@testing-library/react';
+import App from './App';
+
+test('renders learn react link', () => {
+  render(<App />);
+  const linkElement = screen.getByText(/learn react/i);
+  expect(linkElement).toBeInTheDocument();
+});
+
+==== END OF FILE: src\App.test.js ====
+
+==== START OF FILE: src\components\Accordion.js ====
+import React, { useState, useRef, useEffect } from 'react';
+import '../styles/accordion.css';
+
+const AccordionItem = ({ title, children, isOpen, onClick }) => {
+    const contentRef = useRef(null);
+
+    useEffect(() => {
+        if (contentRef.current) {
+            contentRef.current.style.maxHeight = isOpen
+                ? `${contentRef.current.scrollHeight}px`
+                : '0px';
+            contentRef.current.style.paddingTop = isOpen ? '15px' : '0px';
+            contentRef.current.style.paddingBottom = isOpen ? '15px' : '0px';
+            contentRef.current.style.opacity = isOpen ? '1' : '0'; // Ensure smooth opacity transition
+        }
+    }, [isOpen]);
+
+    return (
+        <div className="accordion-item">
+            <div className="accordion-header" onClick={onClick}>
+                {title}
+                <span className={`arrow ${isOpen ? 'open' : ''}`}></span>
+            </div>
+            <div
+                ref={contentRef}
+                className={`accordion-body ${isOpen ? 'open' : ''}`}
+            >
+                {children}
+            </div>
+        </div>
+    );
+};
+
+const Accordion = ({ items }) => {
+    const [openIndex, setOpenIndex] = useState(null);
+
+    const handleClick = (index) => {
+        setOpenIndex(openIndex === index ? null : index);
+    };
+
+    return (
+        <div className="accordion">
+            {items.map((item, index) => (
+                <AccordionItem
+                    key={index}
+                    title={item.title}
+                    isOpen={openIndex === index}
+                    onClick={() => handleClick(index)}
+                >
+                    {item.content}
+                </AccordionItem>
+            ))}
+        </div>
+    );
+};
+
+export default Accordion;
+
+==== END OF FILE: src\components\Accordion.js ====
+
+==== START OF FILE: src\components\Button.js ====
+import React from 'react';
+import '../styles/button.css';
+
+const Button = ({ label, onClick, type = 'primary', className = '' }) => {
+    return (
+        <button className={`custom-button ${type} ${className}`} onClick={onClick}>
+            {label}
+        </button>
+    );
+};
+
+export default Button;
+
+==== END OF FILE: src\components\Button.js ====
+
+==== START OF FILE: src\components\ConnectWalletButton.js ====
+import React, { useContext } from 'react';
+import { WalletContext } from '../contexts/WalletContext';
+import Button from './Button';
+import '../styles/connectWalletButton.css';
+
+const truncateAddress = (address) => {
+    if (typeof address !== 'string') return '';
+    return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
+};
+
+const ConnectWalletButton = () => {
+    const { walletAddress, connectWallet } = useContext(WalletContext);
+
+    return (
+        <Button
+            label={walletAddress ? truncateAddress(walletAddress) : 'Connect Wallet'}
+            onClick={connectWallet}
+            type="primary"
+            className="custom-connect-button"
+        />
+    );
+};
+
+export default ConnectWalletButton;
+
+==== END OF FILE: src\components\ConnectWalletButton.js ====
+
+==== START OF FILE: src\components\Dropdown.js ====
+import React, { useState } from 'react';
+import '../styles/dropdown.css';
+
+const Dropdown = ({ options, selected, onChange }) => {
+    const [isOpen, setIsOpen] = useState(false);
+
+    const handleOptionClick = (option) => {
+        onChange(option);
+        setIsOpen(false);
+    };
+
+    return (
+        <div className="dropdown">
+            <button className="dropdown-button" onClick={() => setIsOpen(!isOpen)}>
+                {selected}
+                <span className={`arrow ${isOpen ? 'open' : ''}`}></span>
+            </button>
+            <ul className={`dropdown-menu ${isOpen ? 'show' : ''}`}>
+                {options.map((option, index) => (
+                    <li
+                        key={index}
+                        onClick={() => handleOptionClick(option)}
+                        className={option === selected ? 'selected' : ''}
+                    >
+                        {option}
+                    </li>
+                ))}
+            </ul>
+        </div>
+    );
+};
+
+export default Dropdown;
+
+==== END OF FILE: src\components\Dropdown.js ====
+
+==== START OF FILE: src\components\Header.js ====
+import React from 'react';
+import '../styles/header.css';;
+
+const Header = ({ title }) => {
+    return (
+        <header className="custom-header">
+            <h1>{title}</h1>
+        </header>
+    );
+};
+
+export default Header;
+
+==== END OF FILE: src\components\Header.js ====
+
+==== START OF FILE: src\components\LoadingAnimation.js ====
+import React from 'react';
+import '../styles/loadingAnimation.css';
+
+const LoadingAnimation = () => {
+    return (
+        <div className="loading-animation">
+            <div className="dot"></div>
+            <div className="dot"></div>
+            <div className="dot"></div>
+        </div>
+    );
+};
+
+export default LoadingAnimation;
+
+==== END OF FILE: src\components\LoadingAnimation.js ====
+
+==== START OF FILE: src\components\Modal.js ====
+import React, { useEffect, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import '../styles/modal.css';
+
+const Modal = ({ isOpen, title, children, onClose }) => {
+    const [visible, setVisible] = useState(isOpen);
+
+    useEffect(() => {
+        if (isOpen) {
+            setVisible(true);
+        }
+    }, [isOpen]);
+
+    const handleClose = () => {
+        setVisible(false);
+    };
+
+    return (
+        <AnimatePresence onExitComplete={onClose}>
+            {visible && (
+                <motion.div
+                    className="modal-overlay"
+                    onClick={handleClose}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                >
+                    <motion.div
+                        className="modal"
+                        onClick={(e) => e.stopPropagation()}
+                        initial={{ y: -50, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        exit={{ y: 50, opacity: 0 }}
+                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                    >
+                        <div className="modal-header">
+                            <h2>{title}</h2>
+                            <button
+                                className="close-button custom-button secondary"
+                                onClick={handleClose}
+                            >
+                                &times;
+                            </button>
+                        </div>
+                        <div className="modal-body">
+                            {children}
+                        </div>
+                    </motion.div>
+                </motion.div>
+            )}
+        </AnimatePresence>
+    );
+};
+
+export default Modal;
+
+==== END OF FILE: src\components\Modal.js ====
+
+==== START OF FILE: src\components\Pagination.js ====
+
+import React from 'react';
+import '../styles/pagination.css';
+
+const Pagination = ({ currentPage, totalPages, onPageChange }) => {
+    const pages = [];
+    for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+    }
+
+    return (
+        <div className="pagination">
+            {pages.map(page => (
+                <button 
+                    key={page} 
+                    className={`page-item ${page === currentPage ? 'active' : ''}`} 
+                    onClick={() => onPageChange(page)}
+                >
+                    {page}
+                </button>
+            ))}
+        </div>
+    );
+};
+
+export default Pagination;
+
+==== END OF FILE: src\components\Pagination.js ====
+
+==== START OF FILE: src\components\ProgressBar.js ====
+import styled from 'styled-components';
+
+const ProgressBar = ({ progress }) => {
+    return (
+        <ProgressContainer>
+            <ProgressWave progress={progress} />
+        </ProgressContainer>
+    );
+};
+
+const ProgressContainer = styled.div`
+    width: 100%;
+    background-color: #f1f1f1;
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+    height: 20px;
+`;
+
+const ProgressWave = styled.div`
+    width: ${(props) => props.progress}%;
+    background: linear-gradient(270deg, #007bff, #0056b3);
+    height: 100%;
+    background-size: 400% 400%;
+    animation: wave 1.5s ease-in-out infinite;
+    
+    @keyframes wave {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+`;
+
+export default ProgressBar;
+
+==== END OF FILE: src\components\ProgressBar.js ====
+
+==== START OF FILE: src\components\Slider.js ====
+import React, { useState } from 'react';
+import '../styles/slider.css';
+
+const Slider = ({ min, max, value, onChange }) => {
+    const [sliderValue, setSliderValue] = useState(value);
+
+    const handleSliderChange = (e) => {
+        setSliderValue(e.target.value);
+        onChange(e);
+    };
+
+    return (
+        <input 
+            type="range" 
+            min={min} 
+            max={max} 
+            value={sliderValue} 
+            className="custom-slider" 
+            onChange={handleSliderChange} 
+        />
+    );
+};
+
+export default Slider;
+
+==== END OF FILE: src\components\Slider.js ====
+
+==== START OF FILE: src\components\SwapInterface.js ====
+import React, { useState, useEffect, useContext, useMemo } from 'react';
+import '../styles/swapInterface.css';
+import Button from './Button';
+import ProgressBar from './ProgressBar';
+import Tooltip from './Tooltip';
+import { WalletContext } from '../contexts/WalletContext';
+import axios from 'axios';
+import { useSelector } from 'react-redux';
+
+const SwapInterface = () => {
+    const { isConnected, connectWallet, signer } = useContext(WalletContext);
+    const [ethAmount, setEthAmount] = useState('');
+    const [tokenAmount, setTokenAmount] = useState('');
+    const [ethPriceInUSD, setEthPriceInUSD] = useState(null);
+    const [remainingSupply, setRemainingSupply] = useState(200); // Example starting supply
+    const totalSupply = 240; // Example total supply
+    const rate = 10; // Example rate: 1 ETH = 10 Tokens
+    const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+
+    // Fetch token sumbol from the Reduc store
+    const tokenSymbol = useSelector((state) => state.fnft.tokenSymbol);
+
+    // Memoize the sale end date
+    const saleEndDate = useMemo(() => new Date('2024-09-01T00:00:00Z'), []);
+
+    // Fetch ETH price initially and then every 60 seconds
+    useEffect(() => {
+        const fetchETHPrice = async () => {
+            try {
+                const response = await axios.get('http://localhost:3001/ethprice'); // Fetch from your server
+                setEthPriceInUSD(response.data.price); // Assuming the server response has a 'price' key
+            } catch (error) {
+                console.error('Error fetching ETH price from server:', error);
+            }
+        };
+
+        fetchETHPrice();
+
+        const interval = setInterval(() => {
+            fetchETHPrice();
+        }, 60000); // Fetch the price every 60 seconds
+
+        return () => clearInterval(interval); // Cleanup interval on component unmount
+    }, []);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            const now = new Date().getTime();
+            const distance = saleEndDate.getTime() - now;
+
+            if (distance < 0) {
+                clearInterval(interval);
+                setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+                // Handle token burning logic here
+            } else {
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor(
+                    (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+                );
+                const minutes = Math.floor(
+                    (distance % (1000 * 60 * 60)) / (1000 * 60)
+                );
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                setTimeLeft({ days, hours, minutes, seconds });
+            }
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, [saleEndDate]);
+
+    const handleEthChange = (e) => {
+        const ethValue = e.target.value;
+        setEthAmount(ethValue);
+        setTokenAmount(ethValue * rate);
+    };
+
+    const handleTokenChange = (e) => {
+        const tokenValue = e.target.value;
+        setTokenAmount(tokenValue);
+        setEthAmount(tokenValue / rate);
+    };
+
+    const handleSwap = async () => {
+        if (!isConnected) {
+            connectWallet();
+            return;
+        }
+
+        if (!ethAmount || ethAmount <= 0) {
+            alert('Please enter a valid ETH amount.');
+            return;
+        }
+
+        try {
+            // Example swap logic:
+            // Replace this with your smart contract interaction logic
+            // Assuming you have a contract instance and ABI ready
+            /*
+            const contract = new ethers.Contract(contractAddress, contractABI, signer);
+            const tx = await contract.swap({
+                value: ethers.parseEther(ethAmount.toString()),
+            });
+            await tx.wait();
+            */
+
+            // Update remaining supply
+            const newRemainingSupply = remainingSupply - tokenAmount;
+            if (newRemainingSupply < 0) {
+                alert('Not enough tokens remaining for this swap.');
+                return;
+            }
+            setRemainingSupply(newRemainingSupply);
+
+            alert(`Successfully swapped ${ethAmount} ETH for ${tokenAmount} Tokens`);
+            // Reset input fields
+            setEthAmount('');
+            setTokenAmount('');
+        } catch (error) {
+            console.error('Swap failed:', error);
+            alert('Swap failed. Please try again.');
+        }
+    };
+
+    const getProgress = () => {
+        return ((totalSupply - remainingSupply) / totalSupply) * 100;
+    };
+
+    return (
+        <div className="swap-interface">
+            <h2>Token Swap</h2>
+            <div className="swap-form">
+                <div className="input-group">
+                    <label htmlFor="ethAmount">Buy</label>
+                    <input
+                        type="number"
+                        id="ethAmount"
+                        value={ethAmount}
+                        onChange={handleEthChange}
+                        placeholder="0.0"
+                        step="0.01"
+                        min="0"
+                    />
+                    <span className="currency">ETH</span>
+                    <span className="usd-value">
+                        {ethPriceInUSD !== null && ethAmount
+                            ? `$${(ethAmount * ethPriceInUSD).toFixed(2)} USD`
+                            : '—'}
+                    </span>
+                </div>
+                <div className="input-group">
+                    <label htmlFor="tokenAmount">Receive</label>
+                    <input
+                        type="number"
+                        id="tokenAmount"
+                        value={tokenAmount}
+                        onChange={handleTokenChange}
+                        placeholder="0.0"
+                        step="1"
+                        min="0"
+                    />
+                    <span className="currency">${tokenSymbol}</span>
+                    <span className="usd-value">
+                        {ethPriceInUSD !== null && tokenAmount
+                            ? `$${((tokenAmount / rate) * ethPriceInUSD).toFixed(2)} USD`
+                            : '—'}
+                    </span>
+                </div>
+                <Button
+                    label={isConnected ? 'Swap' : 'Connect Wallet'}
+                    onClick={handleSwap}
+                    type="primary"
+                    className="custom-buy-button"
+                />
+            </div>
+            <div className="progress-bar-container">
+    <ProgressBar progress={getProgress()} />
+    <div className="token-info">
+        <div className="flashy-bubble">
+            <div className="orbiting-bubble"></div>
+            <div className="orbiting-bubble"></div>
+            <div className="orbiting-bubble"></div>
+        </div>
+        <p>{remainingSupply} Tokens remaining</p>
+    </div>
+</div>
+
+            <div className="countdown-timer">
+                <Tooltip
+                    id="sale-end-tooltip"
+                    text="Unclaimed tokens will be burnt when the timer hits zero!"
+                >
+                    <span className="info-icon">ℹ️</span>
+                </Tooltip>
+                <div className="timer">
+                    {`${timeLeft.days}d ${timeLeft.hours}h ${timeLeft.minutes}m ${timeLeft.seconds}s`}
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default SwapInterface;
+
+==== END OF FILE: src\components\SwapInterface.js ====
+
+==== START OF FILE: src\components\Tabs.js ====
+import React, { useState, useEffect, useRef } from 'react';
+import '../styles/tabs.css';
+
+const Tabs = ({ tabs }) => {
+    const [activeTab, setActiveTab] = useState(tabs[0].label);
+    const [content, setContent] = useState(tabs[0].content);
+    const [fadeState, setFadeState] = useState('fade-in');
+    const [lineStyle, setLineStyle] = useState({});
+    const tabRefs = useRef([]);
+
+    useEffect(() => {
+        const activeIndex = tabs.findIndex(tab => tab.label === activeTab);
+        const activeTabRef = tabRefs.current[activeIndex];
+        if (activeTabRef) {
+            const { offsetWidth, offsetLeft } = activeTabRef;
+            setLineStyle({
+                width: `${offsetWidth}px`,
+                left: `${offsetLeft}px`,
+            });
+        }
+    }, [activeTab, tabs]);
+
+    useEffect(() => {
+        if (fadeState === 'fade-out') {
+            const timeout = setTimeout(() => {
+                setContent(tabs.find(tab => tab.label === activeTab).content);
+                setFadeState('fade-in');
+            }, 300); // 300ms delay to match the fade-out duration
+            return () => clearTimeout(timeout);
+        }
+    }, [fadeState, activeTab, tabs]);
+
+    const handleTabClick = (label) => {
+        if (label !== activeTab) {
+            setFadeState('fade-out');
+            setActiveTab(label);
+        }
+    };
+
+    return (
+        <div className="tabs">
+            <div className="tab-headers">
+                {tabs.map((tab, index) => (
+                    <button
+                        key={tab.label}
+                        className={`tab-button ${activeTab === tab.label ? 'active' : ''}`}
+                        onClick={() => handleTabClick(tab.label)}
+                        ref={el => tabRefs.current[index] = el}
+                    >
+                        {tab.label}
+                    </button>
+                ))}
+                <div className="active-tab-indicator" style={lineStyle}></div>
+            </div>
+            <div className="tab-content-wrapper">
+                <div className="tab-background"></div>
+                <div className={`tab-content ${fadeState}`}>
+                    {content}
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default Tabs;
+
+==== END OF FILE: src\components\Tabs.js ====
+
+==== START OF FILE: src\components\TextInput.js ====
+import React, { useState } from 'react';
+import '../styles/input.css';
+
+const TextInput = ({ label, placeholder, error }) => {
+    const [value, setValue] = useState('');
+
+    return (
+        <div className="input-group">
+            <label>{label}</label>
+            <input 
+                type="text" 
+                placeholder={placeholder} 
+                value={value} 
+                onChange={(e) => setValue(e.target.value)} 
+                className={error ? 'error' : ''}
+            />
+            {error && <span className="error-message">{error}</span>}
+        </div>
+    );
+};
+
+export default TextInput;
+
+==== END OF FILE: src\components\TextInput.js ====
+
+==== START OF FILE: src\components\Toast.js ====
+
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+const showToast = () => {
+    toast.success("This is a toast notification!");
+};
+
+export { ToastContainer, showToast };
+
+==== END OF FILE: src\components\Toast.js ====
+
+==== START OF FILE: src\components\Tooltip.js ====
+import React, { useState } from 'react';
+import '../styles/tooltip.css';
+
+const Tooltip = ({ text, children }) => {
+    const [isVisible, setIsVisible] = useState(false);
+
+    const showTooltip = () => setIsVisible(true);
+    const hideTooltip = () => setIsVisible(false);
+
+    return (
+        <div 
+            className="tooltip-container"
+            onMouseEnter={showTooltip}
+            onMouseLeave={hideTooltip}
+        >
+            {children}
+            {isVisible && (
+                <div className="tooltip-text">
+                    {text}
+                </div>
+            )}
+        </div>
+    );
+};
+
+export default Tooltip;
+
+==== END OF FILE: src\components\Tooltip.js ====
+
+==== START OF FILE: src\components\VideoPlaceholder.js ====
+import React, { useState } from 'react';
+import '../styles/videoPlaceholder.css';
+import Modal from './Modal';
+import VideoPlayer from './VideoPlayer';
+import RED_WHALE_LOGO from '../images/Y1.jpg';
+import Y1Video from '../NFT-videos/Y1.mp4';
+
+const VideoPlaceholder = () => {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const handleImageClick = () => {
+        setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+    };
+
+    return (
+        <>
+            <img
+                src={RED_WHALE_LOGO}
+                alt="NFT Placeholder"
+                className="video-placeholder-image"
+                onClick={handleImageClick}
+            />
+            {isModalOpen && (
+                <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
+                    <VideoPlayer videoSrc={Y1Video} />
+                </Modal>
+            )}
+        </>
+    );
+};
+
+export default VideoPlaceholder;
+
+==== END OF FILE: src\components\VideoPlaceholder.js ====
+
+==== START OF FILE: src\components\VideoPlayer.js ====
+import React from 'react';
+import '../styles/videoPlayer.css';
+
+const VideoPlayer = ({ videoSrc }) => {
+    return (
+        <video controls autoPlay loop className="video-player">
+            <source src={videoSrc} type="video/mp4" />
+            Your browser does not support the video tag.
+        </video>
+    );
+};
+
+export default VideoPlayer;
+
+==== END OF FILE: src\components\VideoPlayer.js ====
+
+==== START OF FILE: src\components\WalletConnectButton.js ====
+import React from 'react';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
+import '../styles/walletConnectButton.css';
+
+const WalletConnectButton = () => {
+    return (
+        <div className="wallet-connect-button">
+            <ConnectButton />
+        </div>
+    );
+};
+
+export default WalletConnectButton;
+
+==== END OF FILE: src\components\WalletConnectButton.js ====
+
+==== START OF FILE: src\contexts\WalletContext.js ====
+// src/contexts/WalletContext.js
+import React, { createContext, useState, useEffect } from 'react';
+import { ethers } from 'ethers';
+
+export const WalletContext = createContext();
+
+export const WalletProvider = ({ children }) => {
+    const [walletAddress, setWalletAddress] = useState(null);
+    const [provider, setProvider] = useState(null);
+    const [signer, setSigner] = useState(null);
+    const [isConnected, setIsConnected] = useState(false);
+
+    useEffect(() => {
+        const checkWalletConnection = async () => {
+            if (window.ethereum) {
+                try {
+                    const web3Provider = new ethers.BrowserProvider(window.ethereum);
+                    const accounts = await web3Provider.listAccounts();
+                    if (accounts.length > 0) {
+                        const account = accounts[0];
+                        setWalletAddress(account);
+                        setProvider(web3Provider);
+                        setSigner(web3Provider.getSigner());
+                        setIsConnected(true);
+                    }
+                } catch (error) {
+                    console.error('Error checking wallet connection:', error);
+                }
+            } else {
+                console.warn('No Ethereum provider found. Install MetaMask.');
+            }
+        };
+
+        checkWalletConnection();
+
+        // Listen for account changes
+        if (window.ethereum) {
+            window.ethereum.on('accountsChanged', (accounts) => {
+                if (accounts.length > 0) {
+                    setWalletAddress(accounts[0]);
+                    setIsConnected(true);
+                } else {
+                    setWalletAddress(null);
+                    setIsConnected(false);
+                }
+            });
+
+            window.ethereum.on('chainChanged', () => {
+                window.location.reload();
+            });
+        }
+    }, []);
+
+    const connectWallet = async () => {
+        if (window.ethereum) {
+            try {
+                const web3Provider = new ethers.BrowserProvider(window.ethereum);
+                const accounts = await web3Provider.send('eth_requestAccounts', []);
+                if (accounts.length > 0) {
+                    const account = accounts[0];
+                    setWalletAddress(account);
+                    setProvider(web3Provider);
+                    setSigner(web3Provider.getSigner());
+                    setIsConnected(true);
+                }
+            } catch (error) {
+                console.error('Error connecting wallet:', error);
+            }
+        } else {
+            alert('MetaMask is not installed. Please install it to use this feature.');
+        }
+    };
+
+    return (
+        <WalletContext.Provider
+            value={{
+                walletAddress,
+                provider,
+                signer,
+                isConnected,
+                connectWallet,
+            }}
+        >
+            {children}
+        </WalletContext.Provider>
+    );
+};
+
+==== END OF FILE: src\contexts\WalletContext.js ====
+
+==== START OF FILE: src\index.css ====
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #f0f2f5;
+    color: #333;
+}
+
+#root {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+==== END OF FILE: src\index.css ====
+
+==== START OF FILE: src\index.js ====
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import './index.css';
+import App from './App';
+import { Provider } from 'react-redux';
+import { store, persistor } from './redux/store';
+import { PersistGate } from 'redux-persist/integration/react';
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+    <React.StrictMode>
+        <Provider store={store}>
+            <PersistGate loading={null} persistor={persistor}>
+                <App />
+            </PersistGate>
+        </Provider>
+    </React.StrictMode>
+);
+
+==== END OF FILE: src\index.js ====
+
+==== START OF FILE: src\logo.svg ====
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 841.9 595.3"><g fill="#61DAFB"><path d="M666.3 296.5c0-32.5-40.7-63.3-103.1-82.4 14.4-63.6 8-114.2-20.2-130.4-6.5-3.8-14.1-5.6-22.4-5.6v22.3c4.6 0 8.3.9 11.4 2.6 13.6 7.8 19.5 37.5 14.9 75.7-1.1 9.4-2.9 19.3-5.1 29.4-19.6-4.8-41-8.5-63.5-10.9-13.5-18.5-27.5-35.3-41.6-50 32.6-30.3 63.2-46.9 84-46.9V78c-27.5 0-63.5 19.6-99.9 53.6-36.4-33.8-72.4-53.2-99.9-53.2v22.3c20.7 0 51.4 16.5 84 46.6-14 14.7-28 31.4-41.3 49.9-22.6 2.4-44 6.1-63.6 11-2.3-10-4-19.7-5.2-29-4.7-38.2 1.1-67.9 14.6-75.8 3-1.8 6.9-2.6 11.5-2.6V78.5c-8.4 0-16 1.8-22.6 5.6-28.1 16.2-34.4 66.7-19.9 130.1-62.2 19.2-102.7 49.9-102.7 82.3 0 32.5 40.7 63.3 103.1 82.4-14.4 63.6-8 114.2 20.2 130.4 6.5 3.8 14.1 5.6 22.5 5.6 27.5 0 63.5-19.6 99.9-53.6 36.4 33.8 72.4 53.2 99.9 53.2 8.4 0 16-1.8 22.6-5.6 28.1-16.2 34.4-66.7 19.9-130.1 62-19.1 102.5-49.9 102.5-82.3zm-130.2-66.7c-3.7 12.9-8.3 26.2-13.5 39.5-4.1-8-8.4-16-13.1-24-4.6-8-9.5-15.8-14.4-23.4 14.2 2.1 27.9 4.7 41 7.9zm-45.8 106.5c-7.8 13.5-15.8 26.3-24.1 38.2-14.9 1.3-30 2-45.2 2-15.1 0-30.2-.7-45-1.9-8.3-11.9-16.4-24.6-24.2-38-7.6-13.1-14.5-26.4-20.8-39.8 6.2-13.4 13.2-26.8 20.7-39.9 7.8-13.5 15.8-26.3 24.1-38.2 14.9-1.3 30-2 45.2-2 15.1 0 30.2.7 45 1.9 8.3 11.9 16.4 24.6 24.2 38 7.6 13.1 14.5 26.4 20.8 39.8-6.3 13.4-13.2 26.8-20.7 39.9zm32.3-13c5.4 13.4 10 26.8 13.8 39.8-13.1 3.2-26.9 5.9-41.2 8 4.9-7.7 9.8-15.6 14.4-23.7 4.6-8 8.9-16.1 13-24.1zM421.2 430c-9.3-9.6-18.6-20.3-27.8-32 9 .4 18.2.7 27.5.7 9.4 0 18.7-.2 27.8-.7-9 11.7-18.3 22.4-27.5 32zm-74.4-58.9c-14.2-2.1-27.9-4.7-41-7.9 3.7-12.9 8.3-26.2 13.5-39.5 4.1 8 8.4 16 13.1 24 4.7 8 9.5 15.8 14.4 23.4zM420.7 163c9.3 9.6 18.6 20.3 27.8 32-9-.4-18.2-.7-27.5-.7-9.4 0-18.7.2-27.8.7 9-11.7 18.3-22.4 27.5-32zm-74 58.9c-4.9 7.7-9.8 15.6-14.4 23.7-4.6 8-8.9 16-13 24-5.4-13.4-10-26.8-13.8-39.8 13.1-3.1 26.9-5.8 41.2-7.9zm-90.5 125.2c-35.4-15.1-58.3-34.9-58.3-50.6 0-15.7 22.9-35.6 58.3-50.6 8.6-3.7 18-7 27.7-10.1 5.7 19.6 13.2 40 22.5 60.9-9.2 20.8-16.6 41.1-22.2 60.6-9.9-3.1-19.3-6.5-28-10.2zM310 490c-13.6-7.8-19.5-37.5-14.9-75.7 1.1-9.4 2.9-19.3 5.1-29.4 19.6 4.8 41 8.5 63.5 10.9 13.5 18.5 27.5 35.3 41.6 50-32.6 30.3-63.2 46.9-84 46.9-4.5-.1-8.3-1-11.3-2.7zm237.2-76.2c4.7 38.2-1.1 67.9-14.6 75.8-3 1.8-6.9 2.6-11.5 2.6-20.7 0-51.4-16.5-84-46.6 14-14.7 28-31.4 41.3-49.9 22.6-2.4 44-6.1 63.6-11 2.3 10.1 4.1 19.8 5.2 29.1zm38.5-66.7c-8.6 3.7-18 7-27.7 10.1-5.7-19.6-13.2-40-22.5-60.9 9.2-20.8 16.6-41.1 22.2-60.6 9.9 3.1 19.3 6.5 28.1 10.2 35.4 15.1 58.3 34.9 58.3 50.6-.1 15.7-23 35.6-58.4 50.6zM320.8 78.4z"/><circle cx="420.9" cy="296.5" r="45.7"/><path d="M520.5 78.1z"/></g></svg>
+==== END OF FILE: src\logo.svg ====
+
+==== START OF FILE: src\pages\demoPage.css ====
+.demo-page {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.video-tabs-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.video-player {
+    flex: 1;
+    min-width: 300px;
+    max-width: 60%;
+}
+
+.tabs {
+    flex: 1;
+    min-width: 300px;
+    max-width: 35%;
+}
+
+/* Mobile Optimization */
+@media (max-width: 768px) {
+    .video-tabs-container {
+        flex-direction: column;
+    }
+
+    .video-player,
+    .tabs {
+        max-width: 100%;
+    }
+}
+
+==== END OF FILE: src\pages\demoPage.css ====
+
+==== START OF FILE: src\pages\DemoPage.js ====
+import React, { useState } from 'react';
+import Button from '../components/Button';
+import Slider from '../components/Slider';
+import Header from '../components/Header';
+import Tabs from '../components/Tabs';
+import LoadingAnimation from '../components/LoadingAnimation';
+import TextInput from '../components/TextInput';
+import Modal from '../components/Modal';
+import Tooltip from '../components/Tooltip';
+import Dropdown from '../components/Dropdown';
+import { ToastContainer, showToast } from '../components/Toast';
+import ProgressBar from '../components/ProgressBar';
+import Accordion from '../components/Accordion';
+import Pagination from '../components/Pagination';
+import '../styles/theme.css';
+
+const DemoPage = () => {
+    const [sliderValue, setSliderValue] = useState(50);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedOption, setSelectedOption] = useState('Option 1');
+    const [currentPage, setCurrentPage] = useState(1);
+    const accordionItems = [
+        { title: "First Item", content: <p>This is the content for the first item.</p> },
+        { title: "Second Item", content: <p>This is the content for the second item.</p> },
+        { title: "Third Item", content: <p>This is the content for the third item.</p> }
+    ];
+
+    return (
+        <div className="wrapper">
+            <Header title="Demo UI Components" />
+
+            <h2>Buttons</h2>
+            <Button label="Primary Button" onClick={() => alert('Button clicked!')} type="primary" />
+            <Button label="Secondary Button" onClick={() => alert('Button clicked!')} type="secondary" />
+
+            <h2>Slider and Progress Bar</h2>
+            <Slider min={0} max={100} value={sliderValue} onChange={(e) => setSliderValue(e.target.value)} />
+            <ProgressBar progress={sliderValue} />
+            <p>Slider Value: {sliderValue}</p>
+
+            <h2>Tabs</h2>
+            <Tabs tabs={[
+                { label: 'Tab 1', content: <p>This is content for Tab 1.</p> },
+                { label: 'Tab 2', content: <p>This is content for Tab 2.</p> },
+                { label: 'Tab 3', content: <p>This is content for Tab 3.</p> },
+            ]} />
+
+            <h2>Loading Animation</h2>
+            <LoadingAnimation />
+
+            <h2>Text Input</h2>
+            <TextInput label="Your Name" placeholder="Enter your name" />
+
+            <h2>Modal</h2>
+            <Button label="Open Modal" onClick={() => setIsModalOpen(true)} type="primary" />
+            <Modal isOpen={isModalOpen} title="Demo Modal" onClose={() => setIsModalOpen(false)}>
+                <p>This is a modal window content.</p>
+            </Modal>
+
+            <h2>Tooltip</h2>
+            <Tooltip text="This is a tooltip!">
+                <Button label="Hover over me" type="primary" />
+            </Tooltip>
+
+            <h2>Dropdown</h2>
+            <Dropdown options={['Option 1', 'Option 2', 'Option 3']} selected={selectedOption} onChange={setSelectedOption} />
+            <p>Selected: {selectedOption}</p>
+
+            <h2>Toast</h2>
+            <Button label="Show Toast" onClick={showToast} type="primary" />
+            <ToastContainer />
+
+            <h2>Accordion</h2>
+            <Accordion items={accordionItems} />
+
+
+            <h2>Pagination</h2>
+            <Pagination currentPage={currentPage} totalPages={5} onPageChange={setCurrentPage} />
+
+            <h2>Toggle Button</h2>
+            <div className="toggle-button" onClick={(e) => e.target.classList.toggle('active')}></div>
+        </div>
+    );
+};
+
+export default DemoPage;
+
+==== END OF FILE: src\pages\DemoPage.js ====
+
+==== START OF FILE: src\pages\mainPage.css ====
+.main-page {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+.content-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.left-section {
+    flex: 1;
+    max-width: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.video-placeholder-image {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: top 0.3s ease; /* Smooth transition for vertical movement */
+    position: relative;
+}
+
+.right-section {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+@media (max-width: 768px) {
+    .content-wrapper {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .right-section {
+        width: 100%;
+    }
+
+    .left-section {
+        width: 100%;
+        max-width: none;
+    }
+}
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color: #282c34; /* Example background color */
+    color: white;
+    border-bottom: 1px solid #444;
+}
+
+.main-header h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.main-header .custom-connect-button {
+    margin-left: auto;
+}
+
+==== END OF FILE: src\pages\mainPage.css ====
+
+==== START OF FILE: src\pages\MainPage.js ====
+import React from 'react';
+import VideoPlaceholder from '../components/VideoPlaceholder';
+import Tabs from '../components/Tabs';
+import SwapInterface from '../components/SwapInterface';
+import ConnectWalletButton from '../components/ConnectWalletButton';
+import './mainPage.css';
+
+const MainPage = () => {
+    const handleWalletConnect = (account) => {
+        console.log('Connected to account:', account);
+    };
+
+    return (
+        <div className="main-page">
+            <div className="content-wrapper">
+                <div className="left-section">
+                    <VideoPlaceholder />
+                </div>
+                <div className="right-section">
+                    <ConnectWalletButton onConnect={handleWalletConnect} />
+                    <Tabs
+                        tabs={[
+                            {
+                                label: 'Swap',
+                                content: <SwapInterface />,
+                            },
+                            {
+                                label: 'Pool',
+                                content: <div>Add Liquidity Content</div>,
+                            },
+                            {
+                                label: 'Earn',
+                                content: <div>Lock LP Content</div>,
+                            },
+                        ]}
+                    />
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default MainPage;
+
+==== END OF FILE: src\pages\MainPage.js ====
+
+==== START OF FILE: src\pages\RefreshPage.js ====
+import React, { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { fetchTokenSymbol } from '../redux/fnftSlice'; // Adjust the import path if necessary
+
+const RefreshPage = () => {
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(fetchTokenSymbol());
+        // Redirect to the main page or any other page after refresh
+        window.location.href = '/';
+    }, [dispatch]);
+
+    return (
+        <div>
+            <p>Refreshing data...</p>
+        </div>
+    );
+};
+
+export default RefreshPage;
+
+==== END OF FILE: src\pages\RefreshPage.js ====
+
+==== START OF FILE: src\redux\fnftSlice.js ====
+// src/redux/fnftSlice.js
+
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import axios from 'axios';
+
+// Async thunk to fetch the token symbol based on seqid
+export const fetchTokenSymbol = createAsyncThunk(
+  'fnft/fetchTokenSymbol',
+  async (seqid) => {
+    const response = await axios.get('http://localhost:3001/fnftdata');
+    const fnft = response.data.find(item => item.seqid === seqid);
+    return fnft ? fnft.symbol : null;
+  }
+);
+
+const fnftSlice = createSlice({
+  name: 'fnft',
+  initialState: {
+    tokenSymbol: null,
+    status: 'idle',
+    error: null,
+  },
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchTokenSymbol.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(fetchTokenSymbol.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.tokenSymbol = action.payload;
+      })
+      .addCase(fetchTokenSymbol.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message;
+      });
+  },
+});
+
+export default fnftSlice.reducer;
+
+==== END OF FILE: src\redux\fnftSlice.js ====
+
+==== START OF FILE: src\redux\store.js ====
+import { configureStore } from '@reduxjs/toolkit';
+import { persistStore, persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
+import { combineReducers } from 'redux';
+import walletReducer from './walletSlice';
+import fnftReducer from './fnftSlice';
+
+const persistConfig = {
+  key: 'root',
+  storage,
+};
+
+const rootReducer = combineReducers({
+  wallet: walletReducer,
+  fnft: fnftReducer,
+});
+
+const persistedReducer = persistReducer(persistConfig, rootReducer);
+
+export const store = configureStore({
+  reducer: persistedReducer,
+});
+
+export const persistor = persistStore(store);
+
+==== END OF FILE: src\redux\store.js ====
+
+==== START OF FILE: src\redux\walletSlice.js ====
+// src/redux/walletSlice.js
+import { createSlice } from '@reduxjs/toolkit';
+
+const walletSlice = createSlice({
+    name: 'wallet',
+    initialState: {
+        isConnected: false,
+        address: '',
+    },
+    reducers: {
+        connectWallet: (state, action) => {
+            state.isConnected = true;
+            state.address = action.payload;
+        },
+        disconnectWallet: (state) => {
+            state.isConnected = false;
+            state.address = '';
+        },
+    },
+});
+
+export const { connectWallet, disconnectWallet } = walletSlice.actions;
+export default walletSlice.reducer;
+
+==== END OF FILE: src\redux\walletSlice.js ====
+
+==== START OF FILE: src\reportWebVitals.js ====
+const reportWebVitals = onPerfEntry => {
+  if (onPerfEntry && onPerfEntry instanceof Function) {
+    import('web-vitals').then(({ getCLS, getFID, getFCP, getLCP, getTTFB }) => {
+      getCLS(onPerfEntry);
+      getFID(onPerfEntry);
+      getFCP(onPerfEntry);
+      getLCP(onPerfEntry);
+      getTTFB(onPerfEntry);
+    });
+  }
+};
+
+export default reportWebVitals;
+
+==== END OF FILE: src\reportWebVitals.js ====
+
+==== START OF FILE: src\services\fnftService.js ====
+import axios from 'axios';
+
+const API_BASE_URL = 'http://localhost:3001'; // Replace with your actual server URL if different
+
+export const fetchFNFTData = async () => {
+    try {
+        const response = await axios.get(`${API_BASE_URL}/fnftdata`);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching F-NFT data:', error);
+        throw error;
+    }
+};
+
+==== END OF FILE: src\services\fnftService.js ====
+
+==== START OF FILE: src\setupTests.js ====
+// jest-dom adds custom jest matchers for asserting on DOM nodes.
+// allows you to do things like:
+// expect(element).toHaveTextContent(/react/i)
+// learn more: https://github.com/testing-library/jest-dom
+import '@testing-library/jest-dom';
+
+==== END OF FILE: src\setupTests.js ====
+
+==== START OF FILE: src\styles\accordion.css ====
+.accordion-item {
+    border-bottom: 1px solid #ddd;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    box-sizing: border-box;
+    position: relative;
+}
+
+/* Rounded corners for the topmost accordion */
+.accordion-item:first-child .accordion-header {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+/* Rounded corners for the bottommost accordion */
+.accordion-item:last-child .accordion-body.open {
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.accordion-header {
+    padding: 15px;
+    cursor: pointer;
+    background-color: #f7f7f7;
+    transition: background-color 0.3s ease;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: left;
+    margin: 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.accordion-header:hover {
+    background-color: #e2e2e2;
+}
+
+/* Blue design element */
+.accordion-header::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 5px;
+    background-color: #007bff;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.accordion-header:hover::before {
+    opacity: 1;
+}
+
+.accordion-body {
+    padding: 0 15px;
+    background-color: white;
+    border-top: 1px solid #ddd;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s ease, opacity 0.3s ease;
+    margin: 0;
+    width: 100%;
+    box-sizing: border-box;
+    opacity: 0; /* Start with 0 opacity for smooth transition */
+}
+
+.accordion-body.open {
+    padding: 15px;
+    opacity: 1; /* Ensure content fades in smoothly */
+    min-height: 80px; /* Ensure a minimum height of 80px */
+}
+
+.arrow {
+    margin-left: auto;
+    border: solid #007bff;
+    border-width: 0 2px 2px 0;
+    padding: 5px;
+    transform: rotate(45deg);
+    transition: transform 0.3s ease;
+}
+
+.arrow.open {
+    transform: rotate(-135deg);
+}
+
+/* Remove border on the last child */
+.accordion-item:last-child {
+    border-bottom: none;
+}
+
+==== END OF FILE: src\styles\accordion.css ====
+
+==== START OF FILE: src\styles\button.css ====
+.custom-button {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: background 0.4s ease, transform 0.1s ease, box-shadow 0.4s ease, color 0.4s ease;
+    background: linear-gradient(135deg, #007bff, #0062cc);
+    color: white;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Hover state with a smooth gradient transition and subtle color change */
+.custom-button:hover {
+    background: linear-gradient(135deg, #0062cc, #004b99);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    transform: translateY(-2px); /* Slight lift on hover */
+}
+
+/* Active/Pressed state with a subtle inset effect */
+.custom-button:active {
+    background: linear-gradient(135deg, #004b99, #003366);
+    box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.3);
+    transform: translateY(0); /* Reset lift on press */
+}
+
+/* Primary Button - subtle gradient with professional color scheme */
+.custom-button.primary {
+    background: linear-gradient(135deg, #007bff, #0062cc);
+}
+
+.custom-button.primary:hover {
+    background: linear-gradient(135deg, #0062cc, #004b99);
+}
+
+.custom-button.primary:active {
+    background: linear-gradient(135deg, #004b99, #003366);
+}
+
+/* Secondary Button - darker, more muted style */
+.custom-button.secondary {
+    background: linear-gradient(135deg, #5a6268, #444b51);
+    color: #f8f9fa;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.custom-button.secondary:hover {
+    background: linear-gradient(135deg, #444b51, #343a40);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.custom-button.secondary:active {
+    background: linear-gradient(135deg, #343a40, #212529);
+    box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Disabled state */
+.custom-button:disabled {
+    background: linear-gradient(135deg, #b1b1b1, #919191);
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.toggle-button {
+    position: relative;
+    width: 50px;
+    height: 24px;
+    background-color: #ccc;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-sizing: border-box;
+    margin: 20px 0; /* Adding some margin to make sure it doesn't overlap with other elements */
+}
+
+.toggle-button:before {
+    content: "";
+    position: absolute;
+    top: 1px;
+    left: 1px;
+    width: 22px;
+    height: 22px;
+    background-color: white;
+    border-radius: 50%;
+    transition: transform 0.3s ease;
+    box-sizing: border-box;
+}
+
+.toggle-button.active {
+    background-color: #007bff;
+}
+
+.toggle-button.active:before {
+    transform: translateX(26px);
+}
+
+.custom-connect-button {
+    font-size: 1.2rem;
+    padding: 10px 20px;
+    background-color: #007bff; /* Example color */
+    color: white;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.custom-connect-button:hover {
+    background-color: #0056b3; /* Darker shade on hover */
+}
+
+.connect-wallet-button .wallet-address {
+    font-size: 14px;
+    color: #ffffff;
+    background-color: #007bff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-transform: uppercase;
+}
+
+==== END OF FILE: src\styles\button.css ====
+
+==== START OF FILE: src\styles\connectWalletButton.css ====
+.custom-connect-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.custom-connect-button:hover {
+    background-color: #0056b3;
+}
+
+==== END OF FILE: src\styles\connectWalletButton.css ====
+
+==== START OF FILE: src\styles\dropdown.css ====
+.dropdown {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.dropdown-button {
+    background-color: #f7f7f7;
+    color: #333;
+    padding: 10px 15px;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+    font-size: 16px;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+.dropdown-button:hover {
+    background-color: #e2e2e2;
+    border-color: #007bff;
+    color: #007bff;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+    margin-top: 5px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+    transition: max-height 0.3s ease, opacity 0.3s ease, visibility 0.3s ease;
+    z-index: 9999;
+    box-sizing: border-box;
+}
+
+.dropdown-menu.show {
+    max-height: 300px;
+    opacity: 1;
+    visibility: visible;
+    padding-left:0;
+}
+
+.dropdown-menu li {
+    padding: 10px 10px 10px 35px; /* Added padding-left to account for the check mark */
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    list-style: none;
+    position: relative; /* To position the check mark */
+}
+
+.dropdown-menu li:hover {
+    background-color: #f1f1f1;
+    color: #007bff;
+}
+
+.dropdown-menu li.selected::before {
+    content: '✔'; /* Unicode for check mark */
+    color: #007bff;
+    font-weight: bold;
+    position: absolute;
+    left: 10px; /* Positioning the check mark */
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.arrow {
+    margin-left: auto;
+    border: solid #007bff;
+    border-width: 0 2px 2px 0;
+    padding: 3px;
+    transform: rotate(-45deg);
+    transition: transform 0.3s ease;
+}
+
+.arrow.open {
+    transform: rotate(45deg);
+}
+
+==== END OF FILE: src\styles\dropdown.css ====
+
+==== START OF FILE: src\styles\header.css ====
+.custom-header {
+    background-color: #343a40;
+    padding: 20px;
+    color: white;
+    text-align: center;
+}
+
+.custom-header h1 {
+    margin: 0;
+    font-size: 2em;
+}
+
+==== END OF FILE: src\styles\header.css ====
+
+==== START OF FILE: src\styles\input.css ====
+.input-group {
+    margin-bottom: 15px;
+    width: 100%; /* Ensure the input group takes the full width of its container */
+    box-sizing: border-box; /* Ensure padding and borders are included in the width */
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.input-group input {
+    width: 100%; /* Ensure the input field takes the full width of its container */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    transition: border-color 0.2s ease;
+    box-sizing: border-box; /* Ensure padding and borders are included in the width */
+}
+
+.input-group input:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+.input-group input.error {
+    border-color: red;
+}
+
+.error-message {
+    color: red;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+==== END OF FILE: src\styles\input.css ====
+
+==== START OF FILE: src\styles\loadingAnimation.css ====
+.loading-animation {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    margin: 0 5px;
+    background-color: #007bff;
+    border-radius: 50%;
+    animation: bounce 1.2s infinite ease-in-out;
+}
+
+.dot:nth-child(2) {
+    animation-delay: -0.4s;
+}
+
+.dot:nth-child(3) {
+    animation-delay: -0.2s;
+}
+
+@keyframes bounce {
+    0%, 80%, 100% {
+        transform: scale(0);
+    }
+    40% {
+        transform: scale(1);
+    }
+}
+
+==== END OF FILE: src\styles\loadingAnimation.css ====
+
+==== START OF FILE: src\styles\modal.css ====
+.modal-overlay {
+    z-index: 10000;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7); /* Slightly darker for more focus on the modal */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(5px); /* Optional blur effect for the background */
+}
+
+.modal {
+    background: #fff;
+    padding: 30px; /* Increased padding for a more spacious feel */
+    border-radius: 10px; /* Softer rounded corners */
+    max-width: 600px; /* Increased width for a more prominent modal */
+    width: 100%;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* More prominent shadow */
+    position: relative; /* For the close button */
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #ddd; /* Subtle separation between header and body */
+    padding-bottom: 10px;
+}
+
+.modal-body {
+    margin-top: 20px;
+}
+
+.close-button { 
+    background-color: #ff5c5c; /* Softer red for a less harsh feel */
+    border: none; 
+    padding: 10px;
+    border-radius: 50%; 
+    cursor: pointer; 
+    color: white; 
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.close-button:hover { 
+    background-color: #e74c3c; 
+    transform: scale(1.1);
+}
+
+==== END OF FILE: src\styles\modal.css ====
+
+==== START OF FILE: src\styles\pagination.css ====
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+    font-family: 'Roboto', sans-serif;
+}
+
+.page-item {
+    padding: 10px 15px;
+    margin: 0 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: white;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);
+}
+
+.page-item.active {
+    background-color: #007bff;
+    color: white;
+}
+
+.page-item.active:hover {
+    background-color: #0069d9; /* A lighter blue shade when active and hovered */
+}
+
+.page-item:hover {
+    background-color: #f1f1f1;
+    transform: scale(1.05);
+}
+
+==== END OF FILE: src\styles\pagination.css ====
+
+==== START OF FILE: src\styles\progressBar.css ====
+.progress-bar {
+    width: 100%;
+    background-color: #f1f1f1;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-bar-inner {
+    height: 20px;
+    background-color: #007bff;
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+==== END OF FILE: src\styles\progressBar.css ====
+
+==== START OF FILE: src\styles\slider.css ====
+.custom-slider {
+    width: 100%;
+    margin: 20px 0;
+    -webkit-appearance: none;
+    height: 8px;
+    background: #ddd;
+    border-radius: 5px;
+    outline: none;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+}
+
+.custom-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: #007bff;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+.custom-slider::-webkit-slider-thumb:hover {
+    background-color: #0056b3;
+    transform: scale(1.1);
+}
+
+.custom-slider::-webkit-slider-thumb:active {
+    background-color: #003d80;
+    transform: scale(1.2);
+}
+
+.custom-slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: #007bff;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+.custom-slider::-moz-range-thumb:hover {
+    background-color: #0056b3;
+    transform: scale(1.1);
+}
+
+.custom-slider::-moz-range-thumb:active {
+    background-color: #003d80;
+    transform: scale(1.2);
+}
+
+==== END OF FILE: src\styles\slider.css ====
+
+==== START OF FILE: src\styles\swapInterface.css ====
+.swap-interface {
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    box-sizing: border-box;
+    margin: 0 auto;
+}
+
+.swap-interface h2 {
+    margin-bottom: 20px;
+    margin-top: 10px;
+    color: #333;
+    font-size: 28px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.swap-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.swap-form .input-group {
+    position: relative;
+    margin-bottom: 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.swap-form .input-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #007bff;
+    font-size: 14px;
+    text-transform: uppercase;
+    padding-left: 20px;
+}
+
+/* swapInterface.css */
+.custom-buy-button {
+    padding-top: 14px;  /* Add extra top padding */
+    padding-bottom: 14px;  /* Add extra bottom padding */
+    font-size: 18px;  /* Increase the font size */
+    /* Inherit all other styles from the global button */
+}
+
+
+.swap-form .input-group input {
+    width: 100%;
+    padding: 20px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    transition: border-color 0.2s ease;
+    box-sizing: border-box;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.swap-form .input-group input:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+.swap-form .input-group .currency {
+    position: absolute;
+    right: 20px;
+    top: 62%;
+    transform: translateY(-50%);
+    font-weight: bold;
+    color: #333;
+    font-size: 18px;
+    pointer-events: none;
+}
+
+.swap-form .input-group .usd-value {
+    position: absolute;
+    right: 20px;
+    bottom: -20px;
+    color: #777;
+    font-size: 14px;
+    font-weight: normal;
+    text-align: right;
+}
+
+.swap-form .input-group input[type="number"]::-webkit-outer-spin-button,
+.swap-form .input-group input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.swap-form .input-group input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+.swap-form .input-group input:disabled {
+    background-color: #f9f9f9;
+    cursor: not-allowed;
+}
+
+/* Custom Buy Button styling */
+.custom-button.primary {
+    padding-top: 20px;
+    padding-bottom: 20px;
+    font-size: 18px;
+}
+
+/* Additional styles for progress bar */
+.progress-bar-container {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.progress-bar-container p {
+    margin-top: 10px;
+    font-weight: bold;
+    color: #333;
+}
+
+.countdown-timer {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    max-width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.countdown-timer .timer {
+    font-size: 36px; /* Large font size */
+    color: #007bffcf; /* Blue color */
+    font-weight: 100; /* Ultra-thin font weight */
+    margin: 0;
+    line-height: 1.2;
+    text-align: center;
+}
+
+.info-icon {
+    font-size: 24px;
+    color: #007bffcf;
+    cursor: pointer;
+    position: absolute;
+    top: -9px;
+    right: -21px;
+    background-color: #f1f1f1;
+    padding: 2px 12px;
+    border-radius: 100%;
+}
+
+.info-icon:hover {
+    color: #0056b3;
+}
+
+.tooltip-container {
+    display: inline-block;
+    position: relative;
+    margin-left: auto;
+}
+
+.tooltip-text {
+    visibility: hidden;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 4px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 150%;
+    right: 0; /* Align tooltip to the right */
+    transform: translateX(50%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    width: max-content;
+    white-space: nowrap;
+}
+
+.tooltip-container:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+
+
+/* Updated Orbiting Planet Animation */
+@keyframes planet-orbit {
+    0% {
+        transform: rotate(0deg) translateX(12px) rotate(0deg) scale(1);
+    }
+    50% {
+        transform: rotate(180deg) translateX(12px) rotate(-180deg) scale(0.8);
+    }
+    100% {
+        transform: rotate(360deg) translateX(12px) rotate(-360deg) scale(1);
+    }
+}
+
+@keyframes bubble-pulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5), 0 0 10px rgba(0, 123, 255, 0.3), 0 0 15px rgba(0, 123, 255, 0.2);
+    }
+    50% {
+        transform: scale(1.2);
+        box-shadow: 0 0 10px rgba(0, 123, 255, 0.7), 0 0 15px rgba(0, 123, 255, 0.5), 0 0 20px rgba(0, 123, 255, 0.3);
+    }
+}
+
+.flashy-bubble {
+    width: 12px;  /* Slightly smaller */
+    height: 12px;
+    background-color: rgba(0, 123, 255, 0.7);
+    border-radius: 50%;
+    animation: bubble-pulse 1.2s infinite ease-in-out;
+    position: relative;
+}
+
+.orbiting-bubble {
+    width: 6px;
+    height: 6px;
+    background-color: rgba(0, 123, 255, 0.5);
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -4px 0 0 -4px;
+    animation: planet-orbit 3s infinite linear;
+    transform-origin: -15px -15px; /* Closer to the center */
+}
+
+.orbiting-bubble:nth-child(1) {
+    animation-duration: 3s;
+    transform-origin: -12px -12px;
+}
+
+.orbiting-bubble:nth-child(2) {
+    animation-duration: 3.5s;
+    transform-origin: -15px -15px;
+}
+
+.orbiting-bubble:nth-child(3) {
+    animation-duration: 4s;
+    transform-origin: -18px -18px;
+}
+
+.token-info {
+    padding-left: 18px;
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+    gap: 20px;
+}
+
+.token-info p {
+    margin: 0;
+    font-weight: bold;
+    color: #333;
+    font-size: 16px;
+}
+
+.loading-dots {
+    display: inline-flex;
+    align-items: center;
+    font-size: 14px;
+    color: #555;
+}
+
+.dot {
+    margin-left: 2px;
+    animation: blink 1.4s infinite both;
+}
+
+@keyframes blink {
+    0% {
+        opacity: 0.2;
+    }
+    20% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0.2;
+    }
+}
+
+.dot:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.dot:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.dot:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+==== END OF FILE: src\styles\swapInterface.css ====
+
+==== START OF FILE: src\styles\tabs.css ====
+.tabs {
+    margin: 20px 0;
+    width: 100%;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.tab-headers {
+    display: flex;
+    justify-content: space-around;
+    border-bottom: 2px solid #ddd;
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: #f7f7f7;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+.tab-button {
+    flex: 1;
+    background: none;
+    border: none;
+    padding: 15px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    text-align: center;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.tab-button:hover {
+    background-color: #e2e2e2;
+    color: #007bff;
+}
+
+.tab-button.active {
+    color: #007bff;
+    background-color: #e9ecef;
+}
+
+.active-tab-indicator {
+    position: absolute;
+    bottom: -2px;
+    height: 2px;
+    background-color: #007bff;
+    transition: width 0.3s ease, left 0.3s ease;
+    width: 0;
+    left: 0;
+}
+
+.tab-content-wrapper {
+    position: relative;
+    background-color: #f8f9fa;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    border-radius: 0 0 5px 5px;
+    box-sizing: border-box;
+    padding: 20px;
+    overflow: hidden;
+}
+
+.tab-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #f8f9fa;
+    z-index: 0;
+}
+
+.tab-content {
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 20px;
+    transition: opacity 0.3s ease;
+    opacity: 1;
+    z-index: 1;
+}
+
+.tab-content.fade-in {
+    opacity: 1;
+}
+
+.tab-content.fade-out {
+    opacity: 0;
+}
+
+==== END OF FILE: src\styles\tabs.css ====
+
+==== START OF FILE: src\styles\theme.css ====
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f2f5;
+    color: #333;
+}
+
+.wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.demo-page {
+    padding: 20px;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: bold;
+}
+
+.custom-header {
+    background-color: #343a40;
+    padding: 20px;
+    color: white;
+    text-align: center;
+}
+
+.custom-header h1 {
+    margin: 0;
+    font-size: 2em;
+}
+
+==== END OF FILE: src\styles\theme.css ====
+
+==== START OF FILE: src\styles\toast.css ====
+.toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+.toast.success {
+    background-color: #28a745;
+}
+
+.toast.error {
+    background-color: #dc3545;
+}
+
+.toast button {
+    background: none;
+    border: none;
+    font-size: 18px;
+    color: white;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+@keyframes fadein {
+    from {bottom: 0; opacity: 0;}
+    to {bottom: 20px; opacity: 1;}
+}
+
+@keyframes fadeout {
+    from {bottom: 20px; opacity: 1;}
+    to {bottom: 0; opacity: 0;}
+}
+
+==== END OF FILE: src\styles\toast.css ====
+
+==== START OF FILE: src\styles\tooltip.css ====
+.tooltip-container {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.tooltip-text {
+    visibility: visible;
+    background-color: #007bff;
+    color: #fff;
+    text-align: center;
+    border-radius: 4px;
+    padding: 5px 10px;
+    position: absolute;
+    z-index: 1;
+    bottom: 150%; /* Position above the element */
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    width: max-content;
+    white-space: nowrap;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tooltip-container:hover .tooltip-text {
+    opacity: 1;
+    visibility: visible;
+}
+
+.tooltip-text::after {
+    content: '';
+    position: absolute;
+    top: 100%; /* Arrow at the bottom of the tooltip */
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #007bff transparent transparent transparent;
+}
+
+==== END OF FILE: src\styles\tooltip.css ====
+
+==== START OF FILE: src\styles\videoPlaceholder.css ====
+.video-placeholder-image {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+    cursor:pointer;
+}
+
+==== END OF FILE: src\styles\videoPlaceholder.css ====
+
+==== START OF FILE: src\styles\videoPlayer.css ====
+.video-player {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto 20px auto;
+    background-color: #000;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.video-player video {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+
+==== END OF FILE: src\styles\videoPlayer.css ====
+
+==== START OF FILE: src\styles\walletConnectButton.css ====
+/* src/styles/walletConnectButton.css */
+.wallet-connect-button {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+}
+
+.wallet-connect-button .connect-button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.wallet-connect-button .connect-button:hover {
+    background-color: #0056b3;
+}
+
+==== END OF FILE: src\styles\walletConnectButton.css ====

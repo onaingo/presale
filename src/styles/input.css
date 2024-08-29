@@ -1,0 +1,37 @@
+.input-group {
+    margin-bottom: 15px;
+    width: 100%; /* Ensure the input group takes the full width of its container */
+    box-sizing: border-box; /* Ensure padding and borders are included in the width */
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.input-group input {
+    width: 100%; /* Ensure the input field takes the full width of its container */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    transition: border-color 0.2s ease;
+    box-sizing: border-box; /* Ensure padding and borders are included in the width */
+}
+
+.input-group input:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+.input-group input.error {
+    border-color: red;
+}
+
+.error-message {
+    color: red;
+    font-size: 12px;
+    margin-top: 5px;
+}

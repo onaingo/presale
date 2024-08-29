@@ -1,0 +1,38 @@
+.demo-page {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.video-tabs-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.video-player {
+    flex: 1;
+    min-width: 300px;
+    max-width: 60%;
+}
+
+.tabs {
+    flex: 1;
+    min-width: 300px;
+    max-width: 35%;
+}
+
+/* Mobile Optimization */
+@media (max-width: 768px) {
+    .video-tabs-container {
+        flex-direction: column;
+    }
+
+    .video-player,
+    .tabs {
+        max-width: 100%;
+    }
+}

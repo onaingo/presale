@@ -1,0 +1,302 @@
+.swap-interface {
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    box-sizing: border-box;
+    margin: 0 auto;
+}
+
+.swap-interface h2 {
+    margin-bottom: 20px;
+    margin-top: 10px;
+    color: #333;
+    font-size: 28px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.swap-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.swap-form .input-group {
+    position: relative;
+    margin-bottom: 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.swap-form .input-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #007bff;
+    font-size: 14px;
+    text-transform: uppercase;
+    padding-left: 20px;
+}
+
+/* swapInterface.css */
+.custom-buy-button {
+    padding-top: 14px;  /* Add extra top padding */
+    padding-bottom: 14px;  /* Add extra bottom padding */
+    font-size: 18px;  /* Increase the font size */
+    /* Inherit all other styles from the global button */
+}
+
+
+.swap-form .input-group input {
+    width: 100%;
+    padding: 20px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    transition: border-color 0.2s ease;
+    box-sizing: border-box;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.swap-form .input-group input:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+.swap-form .input-group .currency {
+    position: absolute;
+    right: 20px;
+    top: 62%;
+    transform: translateY(-50%);
+    font-weight: bold;
+    color: #333;
+    font-size: 18px;
+    pointer-events: none;
+}
+
+.swap-form .input-group .usd-value {
+    position: absolute;
+    right: 20px;
+    bottom: -20px;
+    color: #777;
+    font-size: 14px;
+    font-weight: normal;
+    text-align: right;
+}
+
+.swap-form .input-group input[type="number"]::-webkit-outer-spin-button,
+.swap-form .input-group input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.swap-form .input-group input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+.swap-form .input-group input:disabled {
+    background-color: #f9f9f9;
+    cursor: not-allowed;
+}
+
+/* Custom Buy Button styling */
+.custom-button.primary {
+    padding-top: 20px;
+    padding-bottom: 20px;
+    font-size: 18px;
+}
+
+/* Additional styles for progress bar */
+.progress-bar-container {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.progress-bar-container p {
+    margin-top: 10px;
+    font-weight: bold;
+    color: #333;
+}
+
+.countdown-timer {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    max-width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.countdown-timer .timer {
+    font-size: 36px; /* Large font size */
+    color: #007bffcf; /* Blue color */
+    font-weight: 100; /* Ultra-thin font weight */
+    margin: 0;
+    line-height: 1.2;
+    text-align: center;
+}
+
+.info-icon {
+    font-size: 24px;
+    color: #007bffcf;
+    cursor: pointer;
+    position: absolute;
+    top: -9px;
+    right: -21px;
+    background-color: #f1f1f1;
+    padding: 2px 12px;
+    border-radius: 100%;
+}
+
+.info-icon:hover {
+    color: #0056b3;
+}
+
+.tooltip-container {
+    display: inline-block;
+    position: relative;
+    margin-left: auto;
+}
+
+.tooltip-text {
+    visibility: hidden;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 4px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 150%;
+    right: 0; /* Align tooltip to the right */
+    transform: translateX(50%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    width: max-content;
+    white-space: nowrap;
+}
+
+.tooltip-container:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+
+
+/* Updated Orbiting Planet Animation */
+@keyframes planet-orbit {
+    0% {
+        transform: rotate(0deg) translateX(12px) rotate(0deg) scale(1);
+    }
+    50% {
+        transform: rotate(180deg) translateX(12px) rotate(-180deg) scale(0.8);
+    }
+    100% {
+        transform: rotate(360deg) translateX(12px) rotate(-360deg) scale(1);
+    }
+}
+
+@keyframes bubble-pulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5), 0 0 10px rgba(0, 123, 255, 0.3), 0 0 15px rgba(0, 123, 255, 0.2);
+    }
+    50% {
+        transform: scale(1.2);
+        box-shadow: 0 0 10px rgba(0, 123, 255, 0.7), 0 0 15px rgba(0, 123, 255, 0.5), 0 0 20px rgba(0, 123, 255, 0.3);
+    }
+}
+
+.flashy-bubble {
+    width: 12px;  /* Slightly smaller */
+    height: 12px;
+    background-color: rgba(0, 123, 255, 0.7);
+    border-radius: 50%;
+    animation: bubble-pulse 1.2s infinite ease-in-out;
+    position: relative;
+}
+
+.orbiting-bubble {
+    width: 6px;
+    height: 6px;
+    background-color: rgba(0, 123, 255, 0.5);
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -4px 0 0 -4px;
+    animation: planet-orbit 3s infinite linear;
+    transform-origin: -15px -15px; /* Closer to the center */
+}
+
+.orbiting-bubble:nth-child(1) {
+    animation-duration: 3s;
+    transform-origin: -12px -12px;
+}
+
+.orbiting-bubble:nth-child(2) {
+    animation-duration: 3.5s;
+    transform-origin: -15px -15px;
+}
+
+.orbiting-bubble:nth-child(3) {
+    animation-duration: 4s;
+    transform-origin: -18px -18px;
+}
+
+.token-info {
+    padding-left: 18px;
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+    gap: 20px;
+}
+
+.token-info p {
+    margin: 0;
+    font-weight: bold;
+    color: #333;
+    font-size: 16px;
+}
+
+.loading-dots {
+    display: inline-flex;
+    align-items: center;
+    font-size: 14px;
+    color: #555;
+}
+
+.dot {
+    margin-left: 2px;
+    animation: blink 1.4s infinite both;
+}
+
+@keyframes blink {
+    0% {
+        opacity: 0.2;
+    }
+    20% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0.2;
+    }
+}
+
+.dot:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.dot:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.dot:nth-child(3) {
+    animation-delay: 0.4s;
+}

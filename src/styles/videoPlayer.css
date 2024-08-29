@@ -1,0 +1,15 @@
+.video-player {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto 20px auto;
+    background-color: #000;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.video-player video {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
