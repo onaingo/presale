@@ -4,25 +4,26 @@ import Button from './Button';
 import ProgressBar from './ProgressBar';
 import Tooltip from './Tooltip';
 import { WalletContext } from '../contexts/WalletContext';
-import { useFnftData } from '../contexts/FnftDataContext'; // Import the context hook
+import { useFnftData } from '../contexts/FnftDataContext'; 
 import axios from 'axios';
 import { useSelector } from 'react-redux';
-import AddToWalletButton from './AddToWalletButton'; // Import AddToWalletButton component
+import AddToWalletButton from './AddToWalletButton'; 
 import { ethers } from 'ethers';
 import { fnftTokenLogicABI } from '../smartContracts/ABI';
 
 const SwapInterface = ({ seqid }) => {
-    const { isConnected, connectWallet, signer } = useContext(WalletContext); // signer is included for token balance check
+    const { isConnected, connectWallet } = useContext(WalletContext); 
+
     const fnftData = useFnftData();
     const [ethAmount, setEthAmount] = useState('');
     const [tokenAmount, setTokenAmount] = useState('');
     const [ethPriceInUSD, setEthPriceInUSD] = useState(null);
-    const [walletBalance, setWalletBalance] = useState(null); // store the wallet token balance
-    const [remainingSupply, setRemainingSupply] = useState(200); // Example starting supply
-    const totalSupply = 240; // Example total supply
-    const rate = 10; // Example rate: 1 ETH = 10 Tokens
+    const [walletBalance, setWalletBalance] = useState(null); 
+    const [remainingSupply, setRemainingSupply] = useState(200); 
+    const totalSupply = 240; 
+    const rate = 10; 
     const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-    const status = useSelector((state) => state.fnftData.status); // Use status from newSlice.js
+    const status = useSelector((state) => state.fnftData.status); 
     const tokenDetails = fnftData.find(item => item.seqid === Number(seqid));
     const tokenSymbol = tokenDetails?.symbol;
 
@@ -116,26 +117,27 @@ const SwapInterface = ({ seqid }) => {
         return ((totalSupply - remainingSupply) / totalSupply) * 100;
     };
 
-    const fetchTokenBalance = async (signer, proxyContractAddress) => {
+    const fetchTokenBalance = async (signer, tokenContractAddress) => {
         try {
-            // Use the signer to get the address asynchronously
+            if (!signer) throw new Error("Signer is not available");
+
             const userAddress = await signer.getAddress();
-            const contract = new ethers.Contract(proxyContractAddress, fnftTokenLogicABI, signer);
+            const contract = new ethers.Contract(tokenContractAddress, fnftTokenLogicABI, signer);
             const balance = await contract.balanceOf(userAddress);
-            return ethers.formatUnits(balance, 18); // Assuming 18 decimals
+            return ethers.formatUnits(balance, 18); 
         } catch (error) {
             console.error('Error fetching token balance:', error);
             return null;
         }
     };
-    
 
-    // fetch the wallet balance when the component mounts or when the wallet connects
     useEffect(() => {
         const fetchWalletBalance = async () => {
-            if (isConnected && tokenDetails) {
+            if (isConnected && window.ethereum && tokenDetails) {
                 try {
-                    // Assuming you have a method in your wallet context or a service to fetch token balance
+                    const provider = new ethers.BrowserProvider(window.ethereum);
+                    const signer = await provider.getSigner(); // Define the signer here
+                    const address = await signer.getAddress(); // Fetch the signer's address
                     const balance = await fetchTokenBalance(signer, tokenDetails.tokenContractAddress);
                     setWalletBalance(balance);
                 } catch (error) {
@@ -146,7 +148,7 @@ const SwapInterface = ({ seqid }) => {
         };
     
         fetchWalletBalance();
-    }, [isConnected, signer, tokenDetails]);    
+    }, [isConnected, tokenDetails]); // Make sure `signer` is not in the dependency array
 
     return (
         <div className="swap-interface">
@@ -184,9 +186,9 @@ const SwapInterface = ({ seqid }) => {
                     <span className="currency">
                         {status === 'loading' ? 'Loading...' : tokenSymbol ? `$${tokenSymbol}` : '—'}
                     </span>
-                    <AddToWalletButton className="add-to-wallet-button" /> {/* Apply the class for styling */}
+                    <AddToWalletButton className="add-to-wallet-button" />
                     <span className="wallet-balance">
-                        {walletBalance !== null ? `${walletBalance} ${tokenSymbol}` : '—'} {/* Display wallet balance */}
+                        {walletBalance !== null ? `${walletBalance} ${tokenSymbol}` : '—'}
                     </span>
                 </div>
 
