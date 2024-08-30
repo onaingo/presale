@@ -9,9 +9,11 @@ import axios from 'axios';
 import { useSelector } from 'react-redux';
 import AddToWalletButton from './AddToWalletButton'; // Import AddToWalletButton component
 import { ethers } from 'ethers';
+import { fnftTokenLogicABI } from '../smartContracts/ABI';
 
 const SwapInterface = ({ seqid }) => {
-    const { isConnected, connectWallet, signer } = useContext(WalletContext); // signer is included for token balance check
+    const { isConnected, connectWallet, provider } = useContext(WalletContext); 
+    const signer = provider.getSigner();
     const fnftData = useFnftData();
     const [ethAmount, setEthAmount] = useState('');
     const [tokenAmount, setTokenAmount] = useState('');
@@ -115,16 +117,19 @@ const SwapInterface = ({ seqid }) => {
         return ((totalSupply - remainingSupply) / totalSupply) * 100;
     };
 
-    const fetchTokenBalance = async (signer, tokenContractAddress) => {
+    const fetchTokenBalance = async (signer, proxyContractAddress) => {
         try {
-            const contract = new ethers.Contract(tokenContractAddress, tokenABI, signer); // tokenABI should be defined
-            const balance = await contract.balanceOf(signer.getAddress());
-            return ethers.formatUnits(balance, 18); // Assuming the token has 18 decimals
+            const userAddress = await signer.getAddress();
+            console.log('User Address:', userAddress); // Debugging step
+            const contract = new ethers.Contract(proxyContractAddress, fnftTokenLogicABI, signer);
+            const balance = await contract.balanceOf(userAddress);
+            return ethers.formatUnits(balance, 18);
         } catch (error) {
             console.error('Error fetching token balance:', error);
             return null;
         }
-    };    
+    };
+    
 
     // fetch the wallet balance when the component mounts or when the wallet connects
     useEffect(() => {
