@@ -4,14 +4,14 @@ import Button from './Button';
 import ProgressBar from './ProgressBar';
 import Tooltip from './Tooltip';
 import { WalletContext } from '../contexts/WalletContext';
+import { useFnftData } from '../contexts/FnftDataContext'; // Import the context hook
 import axios from 'axios';
-import { ethers } from 'ethers';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchTokenDetails } from '../redux/fnftSlice'; // Import your async thunk
 import AddToWalletButton from './AddToWalletButton'; // Import AddToWalletButton component
 
 const SwapInterface = ({ seqid }) => {
     const { isConnected, connectWallet, signer } = useContext(WalletContext);
+    const fnftData = useFnftData();
     const [ethAmount, setEthAmount] = useState('');
     const [tokenAmount, setTokenAmount] = useState('');
     const [ethPriceInUSD, setEthPriceInUSD] = useState(null);
@@ -22,7 +22,7 @@ const SwapInterface = ({ seqid }) => {
 
     const dispatch = useDispatch(); 
 
-    const tokenDetails = useSelector((state) => state.fnft.tokenDetails);
+    const tokenDetails = fnftData.find(item => item.seqid === Number(seqid));
     const tokenSymbol = tokenDetails?.symbol;
     const status = useSelector((state) => state.fnft.status);
 
@@ -71,12 +71,6 @@ const SwapInterface = ({ seqid }) => {
 
         return () => clearInterval(interval);
     }, [saleEndDate]);
-
-    useEffect(() => {
-        if (seqid) {
-            dispatch(fetchTokenDetails(seqid)); 
-        }
-    }, [seqid, dispatch]);
 
     const handleEthChange = (e) => {
         const ethValue = e.target.value;

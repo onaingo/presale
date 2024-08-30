@@ -1,9 +1,11 @@
+// src/pages/MainPage.js
 import React from 'react';
 import { useParams } from 'react-router-dom'; 
 import VideoPlaceholder from '../components/VideoPlaceholder';
 import Tabs from '../components/Tabs';
 import SwapInterface from '../components/SwapInterface';
 import ConnectWalletButton from '../components/ConnectWalletButton';
+import { FnftDataProvider } from '../contexts/FnftDataContext'; // Import the context provider
 import './mainPage.css';
 
 const MainPage = () => {
@@ -13,32 +15,34 @@ const MainPage = () => {
     };
 
     return (
-        <div className="main-page">
-            <div className="content-wrapper">
-                <div className="left-section">
-                    <VideoPlaceholder seqid={seqid} />
-                </div>
-                <div className="right-section">
-                    <ConnectWalletButton onConnect={handleWalletConnect} />
-                    <Tabs
-                        tabs={[
-                            {
-                                label: 'Swap',
-                                content: <SwapInterface seqid={seqid} />,
-                            },
-                            {
-                                label: 'Pool',
-                                content: <div>Add Liquidity Content</div>,
-                            },
-                            {
-                                label: 'Earn',
-                                content: <div>Lock LP Content</div>,
-                            },
-                        ]}
-                    />
+        <FnftDataProvider>  {/* Wrap your main page with the provider */}
+            <div className="main-page">
+                <div className="content-wrapper">
+                    <div className="left-section">
+                        <VideoPlaceholder seqid={seqid} />
+                    </div>
+                    <div className="right-section">
+                        <ConnectWalletButton onConnect={handleWalletConnect} />
+                        <Tabs
+                            tabs={[
+                                {
+                                    label: 'Swap',
+                                    content: <SwapInterface seqid={seqid} />,
+                                },
+                                {
+                                    label: 'Pool',
+                                    content: <div>Add Liquidity Content</div>,
+                                },
+                                {
+                                    label: 'Earn',
+                                    content: <div>Lock LP Content</div>,
+                                },
+                            ]}
+                        />
+                    </div>
                 </div>
             </div>
-        </div>
+        </FnftDataProvider>
     );
 };
 
