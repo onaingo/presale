@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { fetchTokenDetails } from '../redux/fnftSlice';
+import { fetchFnftData } from '../redux/newSlice'; // Updated to use newSlice
 import '../pages/testComponents.css';
 import AddToWalletButton from '../components/AddToWalletButton';
 
@@ -8,9 +8,7 @@ const TestComponents = () => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        const seqid = 1; // Use a valid seqid for testing
-        dispatch(fetchTokenDetails(seqid)); // Ensure this is correctly dispatched
-        console.log('Dispatched fetchTokenDetails with seqid:', seqid); // Log to confirm dispatch
+        dispatch(fetchFnftData()); // Ensure data is fetched for testing
     }, [dispatch]);
 
     return (

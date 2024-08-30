@@ -1,14 +1,13 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { fetchTokenDetails } from '../redux/fnftSlice'; // Adjust the import path if necessary
+import { fetchFnftData } from '../redux/newSlice'; // Updated to use newSlice
 
 const RefreshPage = () => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        dispatch(fetchTokenDetails());
-        // Redirect to the main page or any other page after refresh
-        window.location.href = '/';
+        dispatch(fetchFnftData()); // Fetch data when the page is loaded
+        window.location.href = '/'; // Redirect to the main page after refresh
     }, [dispatch]);
 
     return (
