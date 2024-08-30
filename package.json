@@ -58,6 +58,7 @@
     "viem": "^2.20.0",
     "wagmi": "^2.12.7",
     "web-vitals": "^2.1.4",
+    "web3": "^4.12.1",
     "webpack": "^5.94.0",
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^5.0.4"

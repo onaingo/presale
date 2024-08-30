@@ -6,7 +6,8 @@ import Tooltip from './Tooltip';
 import { WalletContext } from '../contexts/WalletContext';
 import axios from 'axios';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchTokenSymbol } from '../redux/fnftSlice'; // Import your async thunk
+import { fetchTokenDetails } from '../redux/fnftSlice'; // Import your async thunk
+import AddToWalletButton from './AddToWalletButton'; // Import AddToWalletButton component
 
 const SwapInterface = ({ seqid }) => {
     const { isConnected, connectWallet, signer } = useContext(WalletContext);
@@ -18,23 +19,19 @@ const SwapInterface = ({ seqid }) => {
     const rate = 10; // Example rate: 1 ETH = 10 Tokens
     const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
-    // Get the dispatch function
     const dispatch = useDispatch(); 
 
-    // Fetch token symbol from the Redux store
-    const tokenSymbol = useSelector((state) => state.fnft.tokenSymbol);
-    // Fetch current load state
+    const tokenDetails = useSelector((state) => state.fnft.tokenDetails);
+    const tokenSymbol = tokenDetails?.symbol;
     const status = useSelector((state) => state.fnft.status);
 
-    // Memoize the sale end date
     const saleEndDate = useMemo(() => new Date('2024-09-01T00:00:00Z'), []);
 
-    // Fetch ETH price initially and then every 60 seconds
     useEffect(() => {
         const fetchETHPrice = async () => {
             try {
-                const response = await axios.get('http://localhost:3001/ethprice'); // Fetch from your server
-                setEthPriceInUSD(response.data.price); // Assuming the server response has a 'price' key
+                const response = await axios.get('http://localhost:3001/ethprice'); 
+                setEthPriceInUSD(response.data.price); 
             } catch (error) {
                 console.error('Error fetching ETH price from server:', error);
             }
@@ -44,9 +41,9 @@ const SwapInterface = ({ seqid }) => {
 
         const interval = setInterval(() => {
             fetchETHPrice();
-        }, 60000); // Fetch the price every 60 seconds
+        }, 60000); 
 
-        return () => clearInterval(interval); // Cleanup interval on component unmount
+        return () => clearInterval(interval);
     }, []);
 
     useEffect(() => {
@@ -57,7 +54,6 @@ const SwapInterface = ({ seqid }) => {
             if (distance < 0) {
                 clearInterval(interval);
                 setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-                // Handle token burning logic here
             } else {
                 const days = Math.floor(distance / (1000 * 60 * 60 * 24));
                 const hours = Math.floor(
@@ -77,7 +73,7 @@ const SwapInterface = ({ seqid }) => {
 
     useEffect(() => {
         if (seqid) {
-            dispatch(fetchTokenSymbol(seqid)); // Fetch the token symbol for the specific seqid
+            dispatch(fetchTokenDetails(seqid)); 
         }
     }, [seqid, dispatch]);
 
@@ -105,18 +101,6 @@ const SwapInterface = ({ seqid }) => {
         }
 
         try {
-            // Example swap logic:
-            // Replace this with your smart contract interaction logic
-            // Assuming you have a contract instance and ABI ready
-            /*
-            const contract = new ethers.Contract(contractAddress, contractABI, signer);
-            const tx = await contract.swap({
-                value: ethers.parseEther(ethAmount.toString()),
-            });
-            await tx.wait();
-            */
-
-            // Update remaining supply
             const newRemainingSupply = remainingSupply - tokenAmount;
             if (newRemainingSupply < 0) {
                 alert('Not enough tokens remaining for this swap.');
@@ -125,7 +109,6 @@ const SwapInterface = ({ seqid }) => {
             setRemainingSupply(newRemainingSupply);
 
             alert(`Successfully swapped ${ethAmount} ETH for ${tokenAmount} Tokens`);
-            // Reset input fields
             setEthAmount('');
             setTokenAmount('');
         } catch (error) {
@@ -174,6 +157,7 @@ const SwapInterface = ({ seqid }) => {
                     <span className="currency">
                         {status === 'loading' ? 'Loading...' : `$${tokenSymbol}`}
                     </span>
+                    <AddToWalletButton /> {/* Add the button here */}
                     <span className="usd-value">
                         {ethPriceInUSD !== null && tokenAmount
                             ? `$${((tokenAmount / rate) * ethPriceInUSD).toFixed(2)} USD`
@@ -188,16 +172,16 @@ const SwapInterface = ({ seqid }) => {
                 />
             </div>
             <div className="progress-bar-container">
-    <ProgressBar progress={getProgress()} />
-    <div className="token-info">
-        <div className="flashy-bubble">
-            <div className="orbiting-bubble"></div>
-            <div className="orbiting-bubble"></div>
-            <div className="orbiting-bubble"></div>
-        </div>
-        <p>{remainingSupply} Tokens remaining</p>
-    </div>
-</div>
+                <ProgressBar progress={getProgress()} />
+                <div className="token-info">
+                    <div className="flashy-bubble">
+                        <div className="orbiting-bubble"></div>
+                        <div className="orbiting-bubble"></div>
+                        <div className="orbiting-bubble"></div>
+                    </div>
+                    <p>{remainingSupply} Tokens remaining</p>
+                </div>
+            </div>
 
             <div className="countdown-timer">
                 <Tooltip

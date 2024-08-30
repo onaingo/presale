@@ -1,0 +1,26 @@
+.test-components-container {
+    padding: 20px;
+}
+
+.test-component {
+    margin-bottom: 20px;
+}
+
+.add-to-wallet-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 5px 15px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.add-to-wallet-button:hover {
+    background-color: #0056b3;
+}
+
+.add-to-wallet-button:focus {
+    outline: none;
+}
