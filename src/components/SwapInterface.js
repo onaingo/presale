@@ -12,8 +12,7 @@ import { ethers } from 'ethers';
 import { fnftTokenLogicABI } from '../smartContracts/ABI';
 
 const SwapInterface = ({ seqid }) => {
-    const { isConnected, connectWallet, provider } = useContext(WalletContext); 
-    const signer = provider.getSigner();
+    const { isConnected, connectWallet, signer } = useContext(WalletContext); // signer is included for token balance check
     const fnftData = useFnftData();
     const [ethAmount, setEthAmount] = useState('');
     const [tokenAmount, setTokenAmount] = useState('');
@@ -119,11 +118,11 @@ const SwapInterface = ({ seqid }) => {
 
     const fetchTokenBalance = async (signer, proxyContractAddress) => {
         try {
+            // Use the signer to get the address asynchronously
             const userAddress = await signer.getAddress();
-            console.log('User Address:', userAddress); // Debugging step
             const contract = new ethers.Contract(proxyContractAddress, fnftTokenLogicABI, signer);
             const balance = await contract.balanceOf(userAddress);
-            return ethers.formatUnits(balance, 18);
+            return ethers.formatUnits(balance, 18); // Assuming 18 decimals
         } catch (error) {
             console.error('Error fetching token balance:', error);
             return null;
