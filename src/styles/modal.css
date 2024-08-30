@@ -52,3 +52,20 @@
     background-color: #e74c3c; 
     transform: scale(1.1);
 }
+
+.ipfs-url {
+    word-wrap: break-word; /* Ensures the text wraps nicely within the modal */
+    margin-top: 10px;
+    font-size: 14px; /* Match the font size with the theme */
+    color: #555; /* Use a subtle color to match the theme */
+    text-align: center; /* Center the text */
+}
+
+.ipfs-url a {
+    color: #007bff; /* Use the theme’s link color */
+    text-decoration: none;
+}
+
+.ipfs-url a:hover {
+    text-decoration: underline; /* Underline on hover for better UX */
+}

@@ -117,7 +117,7 @@ const SwapInterface = ({ seqid }) => {
 
     return (
         <div className="swap-interface">
-            <h2>Token Swap</h2>
+            <h2>Own A Piece Of Elmo</h2>
             <div className="swap-form">
                 <div className="input-group">
                     <label htmlFor="ethAmount">Buy</label>
@@ -127,7 +127,7 @@ const SwapInterface = ({ seqid }) => {
                         value={ethAmount}
                         onChange={handleEthChange}
                         placeholder="0.0"
-                        step="0.01"
+                        step="0.1"
                         min="0"
                     />
                     <span className="currency">ETH</span>

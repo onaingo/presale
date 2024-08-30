@@ -38,7 +38,14 @@ const VideoPlaceholder = ({ seqid }) => {
             {isModalOpen && (
                 <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
                     <VideoPlayer videoSrc={videoUrl} />
-                    {ipfsUrl && <p>{ipfsUrl}</p>} {/* Display the ipfsUrl as plain text */}
+                    {ipfsUrl && (
+    <p className="ipfs-url">
+        <a href={ipfsUrl} target="_blank" rel="noopener noreferrer">
+            {ipfsUrl}
+        </a>
+    </p>
+)}
+
                 </Modal>
             )}
         </>

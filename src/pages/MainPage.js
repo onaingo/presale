@@ -22,7 +22,6 @@ const MainPage = () => {
                         <VideoPlaceholder seqid={seqid} />
                     </div>
                     <div className="right-section">
-                        <ConnectWalletButton onConnect={handleWalletConnect} />
                         <Tabs
                             tabs={[
                                 {
