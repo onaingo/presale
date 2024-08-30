@@ -6,11 +6,11 @@ import Tooltip from './Tooltip';
 import { WalletContext } from '../contexts/WalletContext';
 import { useFnftData } from '../contexts/FnftDataContext'; // Import the context hook
 import axios from 'axios';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import AddToWalletButton from './AddToWalletButton'; // Import AddToWalletButton component
 
 const SwapInterface = ({ seqid }) => {
-    const { isConnected, connectWallet, signer } = useContext(WalletContext);
+    const { isConnected, connectWallet } = useContext(WalletContext);
     const fnftData = useFnftData();
     const [ethAmount, setEthAmount] = useState('');
     const [tokenAmount, setTokenAmount] = useState('');
@@ -20,11 +20,10 @@ const SwapInterface = ({ seqid }) => {
     const rate = 10; // Example rate: 1 ETH = 10 Tokens
     const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
-    const dispatch = useDispatch(); 
+    const status = useSelector((state) => state.fnftData.status); // Use status from newSlice.js
 
     const tokenDetails = fnftData.find(item => item.seqid === Number(seqid));
     const tokenSymbol = tokenDetails?.symbol;
-    const status = useSelector((state) => state.fnft.status);
 
     const saleEndDate = useMemo(() => new Date('2024-09-01T00:00:00Z'), []);
 
@@ -139,26 +138,26 @@ const SwapInterface = ({ seqid }) => {
                     </span>
                 </div>
                 <div className="input-group">
-    <label htmlFor="tokenAmount">Receive</label>
-    <input
-        type="number"
-        id="tokenAmount"
-        value={tokenAmount}
-        onChange={handleTokenChange}
-        placeholder="0.0"
-        step="1"
-        min="0"
-    />
-    <span className="currency">
-        {status === 'loading' ? 'Loading...' : `$${tokenSymbol}`}
-    </span>
-    <AddToWalletButton className="add-to-wallet-button" /> {/* Apply the class for styling */}
-    <span className="usd-value">
-        {ethPriceInUSD !== null && tokenAmount
-            ? `$${((tokenAmount / rate) * ethPriceInUSD).toFixed(2)} USD`
-            : '—'}
-    </span>
-</div>
+                    <label htmlFor="tokenAmount">Receive</label>
+                    <input
+                        type="number"
+                        id="tokenAmount"
+                        value={tokenAmount}
+                        onChange={handleTokenChange}
+                        placeholder="0.0"
+                        step="1"
+                        min="0"
+                    />
+                    <span className="currency">
+                        {status === 'loading' ? 'Loading...' : tokenSymbol ? `$${tokenSymbol}` : '—'}
+                    </span>
+                    <AddToWalletButton className="add-to-wallet-button" /> {/* Apply the class for styling */}
+                    <span className="usd-value">
+                        {ethPriceInUSD !== null && tokenAmount
+                            ? `$${((tokenAmount / rate) * ethPriceInUSD).toFixed(2)} USD`
+                            : '—'}
+                    </span>
+                </div>
 
                 <Button
                     label={isConnected ? 'Swap' : 'Connect Wallet'}
