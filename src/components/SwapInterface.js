@@ -8,20 +8,20 @@ import { useFnftData } from '../contexts/FnftDataContext'; // Import the context
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import AddToWalletButton from './AddToWalletButton'; // Import AddToWalletButton component
+import { ethers } from 'ethers';
 
 const SwapInterface = ({ seqid }) => {
-    const { isConnected, connectWallet } = useContext(WalletContext);
+    const { isConnected, connectWallet, signer } = useContext(WalletContext); // signer is included for token balance check
     const fnftData = useFnftData();
     const [ethAmount, setEthAmount] = useState('');
     const [tokenAmount, setTokenAmount] = useState('');
     const [ethPriceInUSD, setEthPriceInUSD] = useState(null);
+    const [walletBalance, setWalletBalance] = useState(null); // store the wallet token balance
     const [remainingSupply, setRemainingSupply] = useState(200); // Example starting supply
     const totalSupply = 240; // Example total supply
     const rate = 10; // Example rate: 1 ETH = 10 Tokens
     const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-
     const status = useSelector((state) => state.fnftData.status); // Use status from newSlice.js
-
     const tokenDetails = fnftData.find(item => item.seqid === Number(seqid));
     const tokenSymbol = tokenDetails?.symbol;
 
@@ -115,6 +115,35 @@ const SwapInterface = ({ seqid }) => {
         return ((totalSupply - remainingSupply) / totalSupply) * 100;
     };
 
+    const fetchTokenBalance = async (signer, tokenContractAddress) => {
+        try {
+            const contract = new ethers.Contract(tokenContractAddress, tokenABI, signer); // tokenABI should be defined
+            const balance = await contract.balanceOf(signer.getAddress());
+            return ethers.formatUnits(balance, 18); // Assuming the token has 18 decimals
+        } catch (error) {
+            console.error('Error fetching token balance:', error);
+            return null;
+        }
+    };    
+
+    // fetch the wallet balance when the component mounts or when the wallet connects
+    useEffect(() => {
+        const fetchWalletBalance = async () => {
+            if (isConnected && tokenDetails) {
+                try {
+                    // Assuming you have a method in your wallet context or a service to fetch token balance
+                    const balance = await fetchTokenBalance(signer, tokenDetails.tokenContractAddress);
+                    setWalletBalance(balance);
+                } catch (error) {
+                    console.error('Error fetching wallet balance:', error);
+                    setWalletBalance(null);
+                }
+            }
+        };
+    
+        fetchWalletBalance();
+    }, [isConnected, signer, tokenDetails]);    
+
     return (
         <div className="swap-interface">
             <h2>Own A Piece Of Elmo</h2>
@@ -152,10 +181,8 @@ const SwapInterface = ({ seqid }) => {
                         {status === 'loading' ? 'Loading...' : tokenSymbol ? `$${tokenSymbol}` : '—'}
                     </span>
                     <AddToWalletButton className="add-to-wallet-button" /> {/* Apply the class for styling */}
-                    <span className="usd-value">
-                        {ethPriceInUSD !== null && tokenAmount
-                            ? `$${((tokenAmount / rate) * ethPriceInUSD).toFixed(2)} USD`
-                            : '—'}
+                    <span className="wallet-balance">
+                        {walletBalance !== null ? `${walletBalance} ${tokenSymbol}` : '—'} {/* Display wallet balance */}
                     </span>
                 </div>
 
