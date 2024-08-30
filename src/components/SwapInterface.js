@@ -4,36 +4,34 @@ import Button from './Button';
 import ProgressBar from './ProgressBar';
 import Tooltip from './Tooltip';
 import { WalletContext } from '../contexts/WalletContext';
-import { useFnftData } from '../contexts/FnftDataContext'; 
+import { useFnftData } from '../contexts/FnftDataContext';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
-import AddToWalletButton from './AddToWalletButton'; 
+import AddToWalletButton from './AddToWalletButton';
 import { ethers } from 'ethers';
 import { fnftTokenLogicABI } from '../smartContracts/ABI';
 
 const SwapInterface = ({ seqid }) => {
-    const { isConnected, connectWallet } = useContext(WalletContext); 
-
+    const { isConnected, connectWallet, signer } = useContext(WalletContext);
     const fnftData = useFnftData();
     const [ethAmount, setEthAmount] = useState('');
     const [tokenAmount, setTokenAmount] = useState('');
     const [ethPriceInUSD, setEthPriceInUSD] = useState(null);
-    const [walletBalance, setWalletBalance] = useState(null); 
-    const [remainingSupply, setRemainingSupply] = useState(200); 
-    const totalSupply = 240; 
-    const rate = 10; 
+    const [walletBalance, setWalletBalance] = useState(null);
+    const [remainingSupply, setRemainingSupply] = useState(200);
+    const totalSupply = 240;
+    const rate = 10;
     const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-    const status = useSelector((state) => state.fnftData.status); 
+    const status = useSelector((state) => state.fnftData.status);
     const tokenDetails = fnftData.find(item => item.seqid === Number(seqid));
     const tokenSymbol = tokenDetails?.symbol;
-
     const saleEndDate = useMemo(() => new Date('2024-09-01T00:00:00Z'), []);
 
     useEffect(() => {
         const fetchETHPrice = async () => {
             try {
-                const response = await axios.get('http://localhost:3001/ethprice'); 
-                setEthPriceInUSD(response.data.price); 
+                const response = await axios.get('http://localhost:3001/ethprice');
+                setEthPriceInUSD(response.data.price);
             } catch (error) {
                 console.error('Error fetching ETH price from server:', error);
             }
@@ -43,7 +41,7 @@ const SwapInterface = ({ seqid }) => {
 
         const interval = setInterval(() => {
             fetchETHPrice();
-        }, 60000); 
+        }, 60000);
 
         return () => clearInterval(interval);
     }, []);
@@ -72,6 +70,25 @@ const SwapInterface = ({ seqid }) => {
 
         return () => clearInterval(interval);
     }, [saleEndDate]);
+
+    useEffect(() => {
+        const fetchWalletBalance = async () => {
+            if (isConnected && window.ethereum && tokenDetails) {
+                try {
+                    const provider = new ethers.BrowserProvider(window.ethereum);
+                    const signer = await provider.getSigner(); // Define the signer here
+                    const address = await signer.getAddress(); // Fetch the signer's address
+                    const balance = await fetchTokenBalance(signer, tokenDetails.tokenContractAddress);
+                    setWalletBalance(balance);
+                } catch (error) {
+                    console.error('Error fetching wallet balance:', error);
+                    setWalletBalance(null);
+                }
+            }
+        };
+
+        fetchWalletBalance();
+    }, [isConnected, tokenDetails]);
 
     const handleEthChange = (e) => {
         const ethValue = e.target.value;
@@ -131,28 +148,9 @@ const SwapInterface = ({ seqid }) => {
         }
     };
 
-    useEffect(() => {
-        const fetchWalletBalance = async () => {
-            if (isConnected && window.ethereum && tokenDetails) {
-                try {
-                    const provider = new ethers.BrowserProvider(window.ethereum);
-                    const signer = await provider.getSigner(); // Define the signer here
-                    const address = await signer.getAddress(); // Fetch the signer's address
-                    const balance = await fetchTokenBalance(signer, tokenDetails.tokenContractAddress);
-                    setWalletBalance(balance);
-                } catch (error) {
-                    console.error('Error fetching wallet balance:', error);
-                    setWalletBalance(null);
-                }
-            }
-        };
-    
-        fetchWalletBalance();
-    }, [isConnected, tokenDetails]); // Make sure `signer` is not in the dependency array
-
     return (
         <div className="swap-interface">
-            <h2>Own A Piece Of Elmo</h2>
+            <h2>Token Swap</h2>
             <div className="swap-form">
                 <div className="input-group">
                     <label htmlFor="ethAmount">Buy</label>
@@ -162,7 +160,7 @@ const SwapInterface = ({ seqid }) => {
                         value={ethAmount}
                         onChange={handleEthChange}
                         placeholder="0.0"
-                        step="0.1"
+                        step="0.01"
                         min="0"
                     />
                     <span className="currency">ETH</span>
@@ -186,7 +184,10 @@ const SwapInterface = ({ seqid }) => {
                     <span className="currency">
                         {status === 'loading' ? 'Loading...' : tokenSymbol ? `$${tokenSymbol}` : '—'}
                     </span>
-                    <AddToWalletButton className="add-to-wallet-button" />
+                    {/* Conditionally render the AddToWalletButton */}
+                    {walletBalance === null || parseFloat(walletBalance) === 0 ? (
+                        <AddToWalletButton className="add-to-wallet-button" />
+                    ) : null}
                     <span className="wallet-balance">
                         {walletBalance !== null ? `${walletBalance} ${tokenSymbol}` : '—'}
                     </span>

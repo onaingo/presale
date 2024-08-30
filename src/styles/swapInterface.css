@@ -113,7 +113,7 @@
     transform: translateY(-50%);
 }
 
-.swap-form .input-group .usd-value {
+.swap-form .input-group .usd-value, .swap-form .input-group .wallet-balance {
     position: absolute;
     right: 20px;
     bottom: -20px;
