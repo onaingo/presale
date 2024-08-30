@@ -5,6 +5,7 @@ import ProgressBar from './ProgressBar';
 import Tooltip from './Tooltip';
 import { WalletContext } from '../contexts/WalletContext';
 import axios from 'axios';
+import { ethers } from 'ethers';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchTokenDetails } from '../redux/fnftSlice'; // Import your async thunk
 import AddToWalletButton from './AddToWalletButton'; // Import AddToWalletButton component
@@ -144,26 +145,27 @@ const SwapInterface = ({ seqid }) => {
                     </span>
                 </div>
                 <div className="input-group">
-                    <label htmlFor="tokenAmount">Receive</label>
-                    <input
-                        type="number"
-                        id="tokenAmount"
-                        value={tokenAmount}
-                        onChange={handleTokenChange}
-                        placeholder="0.0"
-                        step="1"
-                        min="0"
-                    />
-                    <span className="currency">
-                        {status === 'loading' ? 'Loading...' : `$${tokenSymbol}`}
-                    </span>
-                    <AddToWalletButton /> {/* Add the button here */}
-                    <span className="usd-value">
-                        {ethPriceInUSD !== null && tokenAmount
-                            ? `$${((tokenAmount / rate) * ethPriceInUSD).toFixed(2)} USD`
-                            : '—'}
-                    </span>
-                </div>
+    <label htmlFor="tokenAmount">Receive</label>
+    <input
+        type="number"
+        id="tokenAmount"
+        value={tokenAmount}
+        onChange={handleTokenChange}
+        placeholder="0.0"
+        step="1"
+        min="0"
+    />
+    <span className="currency">
+        {status === 'loading' ? 'Loading...' : `$${tokenSymbol}`}
+    </span>
+    <AddToWalletButton className="add-to-wallet-button" /> {/* Apply the class for styling */}
+    <span className="usd-value">
+        {ethPriceInUSD !== null && tokenAmount
+            ? `$${((tokenAmount / rate) * ethPriceInUSD).toFixed(2)} USD`
+            : '—'}
+    </span>
+</div>
+
                 <Button
                     label={isConnected ? 'Swap' : 'Connect Wallet'}
                     onClick={handleSwap}

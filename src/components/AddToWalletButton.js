@@ -64,7 +64,7 @@ const AddToWalletButton = () => {
     return (
         <div>
             <button className="add-to-wallet-button" onClick={handleAddToWallet}>
-                {isConnected ? `Add ${tokenSymbol} to Wallet` : 'Connect Wallet'}
+                {`Add`}
             </button>
         </div>
     );

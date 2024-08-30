@@ -49,6 +49,32 @@
     /* Inherit all other styles from the global button */
 }
 
+.swap-form .input-group {
+    position: relative;
+    margin-bottom: 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.swap-form .input-group .add-to-wallet-button {
+    position: absolute;
+    right: 7px;
+    top: 75%; /* Position the button underneath the symbol */
+    transform: translateY(-50%);
+    font-size: 14px;
+}
+
+.swap-form .input-group input {
+    width: 100%;
+    padding: 20px;
+    padding-right: 100px; /* Extra padding to make space for the currency and button */
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    transition: border-color 0.2s ease;
+    box-sizing: border-box;
+    font-size: 24px;
+    font-weight: bold;
+}
 
 .swap-form .input-group input {
     width: 100%;
@@ -69,12 +95,22 @@
 .swap-form .input-group .currency {
     position: absolute;
     right: 20px;
-    top: 62%;
-    transform: translateY(-50%);
     font-weight: bold;
     color: #333;
     font-size: 18px;
     pointer-events: none;
+}
+
+/* Specific style for the ETH symbol in the Buy input field */
+#ethAmount ~ .currency {
+    top: 62%; /* Original top value for the ETH symbol */
+    transform: translateY(-50%);
+}
+
+/* Specific style for the symbol in the Receive input field */
+#tokenAmount ~ .currency {
+    top: 46%; /* Centered vertically */
+    transform: translateY(-50%);
 }
 
 .swap-form .input-group .usd-value {
