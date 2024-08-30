@@ -103,7 +103,7 @@
 
 /* Specific style for the ETH symbol in the Buy input field */
 #ethAmount ~ .currency {
-    top: 62%; /* Original top value for the ETH symbol */
+    top: 61%; /* Original top value for the ETH symbol */
     transform: translateY(-50%);
 }
 
@@ -111,6 +111,12 @@
 #tokenAmount ~ .currency {
     top: 46%; /* Centered vertically */
     transform: translateY(-50%);
+}
+
+/*adjust symbol position after hide add button element*/
+.adjusted-token-symbol {
+    margin-top: 16px; /* Adjust this value as needed */
+    display: block; /* Ensure it moves the element by applying block-level behavior */
 }
 
 .swap-form .input-group .usd-value, .swap-form .input-group .wallet-balance {

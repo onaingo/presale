@@ -150,7 +150,7 @@ const SwapInterface = ({ seqid }) => {
 
     return (
         <div className="swap-interface">
-            <h2>Token Swap</h2>
+            <h2>Own A Piece Of {tokenSymbol}</h2>
             <div className="swap-form">
                 <div className="input-group">
                     <label htmlFor="ethAmount">Buy</label>
@@ -171,27 +171,26 @@ const SwapInterface = ({ seqid }) => {
                     </span>
                 </div>
                 <div className="input-group">
-                    <label htmlFor="tokenAmount">Receive</label>
-                    <input
-                        type="number"
-                        id="tokenAmount"
-                        value={tokenAmount}
-                        onChange={handleTokenChange}
-                        placeholder="0.0"
-                        step="1"
-                        min="0"
-                    />
-                    <span className="currency">
-                        {status === 'loading' ? 'Loading...' : tokenSymbol ? `$${tokenSymbol}` : '—'}
-                    </span>
-                    {/* Conditionally render the AddToWalletButton */}
-                    {walletBalance === null || parseFloat(walletBalance) === 0 ? (
-                        <AddToWalletButton className="add-to-wallet-button" />
-                    ) : null}
-                    <span className="wallet-balance">
-                        {walletBalance !== null ? `${walletBalance} ${tokenSymbol}` : '—'}
-                    </span>
-                </div>
+    <label htmlFor="tokenAmount">Receive</label>
+    <input
+        type="number"
+        id="tokenAmount"
+        value={tokenAmount}
+        onChange={handleTokenChange}
+        placeholder="0.0"
+        step="1"
+        min="0"
+    />
+    <span className={`currency ${walletBalance !== null && parseFloat(walletBalance) > 0 ? 'adjusted-token-symbol' : ''}`}>
+        {status === 'loading' ? 'Loading...' : tokenSymbol ? `$${tokenSymbol}` : '—'}
+    </span>
+    {walletBalance === null || parseFloat(walletBalance) === 0 ? (
+        <AddToWalletButton className="add-to-wallet-button" />
+    ) : null}
+    <span className="wallet-balance">
+        {walletBalance !== null ? `${walletBalance} ${tokenSymbol}` : '—'}
+    </span>
+</div>
 
                 <Button
                     label={isConnected ? 'Swap' : 'Connect Wallet'}
