@@ -196,8 +196,9 @@ const SwapInterface = ({ seqid }) => {
     {/* Always render the AddToWalletButton */}
     <AddToWalletButton className="add-to-wallet-button" disabled={!isConnected} />
     <span className="wallet-balance">
-        {walletBalance !== null ? `${walletBalance} ${tokenSymbol}` : '—'}
-    </span>
+    {walletBalance !== null ? `${parseFloat(walletBalance).toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 6 })} ${tokenSymbol}` : '—'}
+</span>
+
         {/* Etherscan Button */}
         {tokenDetails && tokenDetails.vaultAddress && (
         <a
