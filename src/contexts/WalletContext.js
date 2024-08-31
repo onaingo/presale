@@ -96,10 +96,12 @@ export const WalletProvider = ({ children }) => {
                     resetWalletState();
                 }
             } catch (error) {
-                console.error('Error connecting wallet:', error);
                 resetWalletState();
             }
         } else {
+            // Dismiss any existing toast with the same content before showing a new one
+            toast.dismiss();
+    
             toast.dark(
                 <>
                     MetaMask is not installed. Please install it to use this feature.{' '}
@@ -115,7 +117,7 @@ export const WalletProvider = ({ children }) => {
                 { autoClose: false, closeOnClick: false }
             );
         }
-    };
+    };    
 
     return (
         <WalletContext.Provider

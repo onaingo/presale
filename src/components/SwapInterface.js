@@ -28,6 +28,15 @@ const SwapInterface = ({ seqid }) => {
     const tokenSymbol = tokenDetails?.symbol;
     const saleEndDate = useMemo(() => new Date('2024-09-01T00:00:00Z'), []);
 
+    // Function to determine the step based on the current value
+    const getDynamicStep = (value) => {
+        if (value && value.includes('.')) {
+            const decimalLength = value.split('.')[1]?.length || 0;
+            return Math.pow(10, -decimalLength);
+        }
+        return 1; // Default step if there are no decimals
+    };
+
     useEffect(() => {
         const fetchETHPrice = async () => {
             try {
@@ -87,15 +96,6 @@ const SwapInterface = ({ seqid }) => {
                 }
             }
         };
-
-        // Function to determine the step based on the current value
-    const getDynamicStep = (value) => {
-        if (value.includes('.')) {
-            const decimalLength = value.split('.')[1]?.length || 0;
-            return Math.pow(10, -decimalLength);
-        }
-        return 1; // Default step if there are no decimals
-    };
 
         fetchWalletBalance();
     }, [isConnected, tokenDetails, walletAddress, signer]);
@@ -189,7 +189,7 @@ const SwapInterface = ({ seqid }) => {
 
     return (
         <div className="swap-interface">
-            <h2>Own A Piece Of {tokenSymbol}</h2>
+            <h2>Own A Piece Of Elmo</h2>
             <div className="swap-form">
             <div className="input-group">
     <label htmlFor="ethAmount">Buy</label>
@@ -199,13 +199,13 @@ const SwapInterface = ({ seqid }) => {
         value={ethAmount}
         onChange={handleEthChange}
         placeholder="0.0"
-        step={getDynamicStep(ethAmount)}
+        step={getDynamicStep(ethAmount)}  // Update this line
         maxLength="8"
     />
     <span className="currency">ETH</span>
     <span className="usd-value">
         {ethPriceInUSD !== null && ethAmount
-            ? `$${(parseFloat(ethAmount) * ethPriceInUSD).toFixed(2)} USD`
+            ? `$${(ethAmount * ethPriceInUSD).toFixed(2)} USD`
             : '—'}
     </span>
 </div>
@@ -217,7 +217,7 @@ const SwapInterface = ({ seqid }) => {
         value={tokenAmount}
         onChange={handleTokenChange}
         placeholder="0.0"
-        step={getDynamicStep(tokenAmount)}
+        step={getDynamicStep(tokenAmount)}  // Update this line
         maxLength="8"
     />
     <span className={`currency ${walletBalance !== null && parseFloat(walletBalance) > 0 ? 'adjusted-token-symbol' : ''}`}>
@@ -245,7 +245,7 @@ const SwapInterface = ({ seqid }) => {
             rel="noopener noreferrer"
             className="etherscan-button"
         >
-            View on Etherscan
+            {tokenSymbol} on Etherscan
         </a>
     )}
 </div>
@@ -264,7 +264,7 @@ const SwapInterface = ({ seqid }) => {
                         <div className="orbiting-bubble"></div>
                         <div className="orbiting-bubble"></div>
                     </div>
-                    <p>{remainingSupply} Tokens remaining</p>
+                    <p>{Number(remainingSupply).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 4 })} Tokens remaining</p>
                 </div>
             </div>
 
