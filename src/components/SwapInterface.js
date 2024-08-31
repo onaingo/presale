@@ -185,7 +185,7 @@ const SwapInterface = ({ seqid }) => {
         {status === 'loading' ? 'Loading...' : tokenSymbol ? `$${tokenSymbol}` : '—'}
     </span>
     {walletBalance === null || parseFloat(walletBalance) === 0 ? (
-        <AddToWalletButton className="add-to-wallet-button" />
+        <AddToWalletButton className="add-to-wallet-button" disabled={!isConnected} />
     ) : null}
     <span className="wallet-balance">
         {walletBalance !== null ? `${walletBalance} ${tokenSymbol}` : '—'}

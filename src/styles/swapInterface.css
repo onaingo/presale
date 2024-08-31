@@ -119,6 +119,12 @@
     display: block; /* Ensure it moves the element by applying block-level behavior */
 }
 
+.add-to-wallet-button.disabled {
+    background-color: #6c757d; /* Greyed out color */
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
 .swap-form .input-group .usd-value, .swap-form .input-group .wallet-balance {
     position: absolute;
     right: 20px;

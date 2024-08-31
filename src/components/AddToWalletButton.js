@@ -3,7 +3,7 @@ import { ethers } from 'ethers';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 
-const AddToWalletButton = () => {
+const AddToWalletButton = ({ className, disabled }) => {
     const [isConnected, setIsConnected] = useState(false);
     const { seqid } = useParams(); // Get the seqid from the URL
 
@@ -63,7 +63,11 @@ const AddToWalletButton = () => {
 
     return (
         <div>
-            <button className="add-to-wallet-button" onClick={handleAddToWallet}>
+            <button 
+                className={`add-to-wallet-button ${disabled ? 'disabled' : ''}`}
+                onClick={handleAddToWallet}
+                disabled={disabled}
+            >
                 {`Add`}
             </button>
         </div>
