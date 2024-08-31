@@ -113,11 +113,11 @@
     transform: translateY(-50%);
 }
 
-/*adjust symbol position after hide add button element*/
-.adjusted-token-symbol {
-    margin-top: 16px; /* Adjust this value as needed */
-    display: block; /* Ensure it moves the element by applying block-level behavior */
-}
+/* adjust symbol position after hide add button element */
+/* .adjusted-token-symbol { */
+    /*margin-top: 16px; /* Adjust this value as needed */
+    /*display: block; /* Ensure it moves the element by applying block-level behavior */
+/* } */
 
 .add-to-wallet-button.disabled {
     background-color: #6c757d; /* Greyed out color */

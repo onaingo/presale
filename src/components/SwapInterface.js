@@ -184,14 +184,21 @@ const SwapInterface = ({ seqid }) => {
     <span className={`currency ${walletBalance !== null && parseFloat(walletBalance) > 0 ? 'adjusted-token-symbol' : ''}`}>
         {status === 'loading' ? 'Loading...' : tokenSymbol ? `$${tokenSymbol}` : '—'}
     </span>
+
+    {/* Commented out the conditional rendering for future use */}
+    {/*
     {walletBalance === null || parseFloat(walletBalance) === 0 ? (
         <AddToWalletButton className="add-to-wallet-button" disabled={!isConnected} />
     ) : null}
+    */}
+
+    {/* Always render the AddToWalletButton */}
+    <AddToWalletButton className="add-to-wallet-button" disabled={!isConnected} />
+
     <span className="wallet-balance">
         {walletBalance !== null ? `${walletBalance} ${tokenSymbol}` : '—'}
     </span>
 </div>
-
                 <Button
                     label={isConnected ? 'Swap' : 'Connect Wallet'}
                     onClick={handleSwap}
