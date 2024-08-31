@@ -10,6 +10,7 @@ import { useSelector } from 'react-redux';
 import AddToWalletButton from './AddToWalletButton';
 import { ethers } from 'ethers';
 import { fnftTokenLogicABI } from '../smartContracts/ABI';
+import { toast } from 'react-toastify';
 
 const SwapInterface = ({ seqid }) => {
     const { isConnected, connectWallet, walletAddress, signer } = useContext(WalletContext);
@@ -109,24 +110,24 @@ const SwapInterface = ({ seqid }) => {
         }
 
         if (!ethAmount || ethAmount <= 0) {
-            alert('Please enter a valid ETH amount.');
+            toast.info('Please enter a valid ETH amount.');
             return;
         }
 
         try {
             const newRemainingSupply = remainingSupply - tokenAmount;
             if (newRemainingSupply < 0) {
-                alert('Not enough tokens remaining for this swap.');
+                toast.error('Not enough tokens remaining for this swap.');
                 return;
             }
             setRemainingSupply(newRemainingSupply);
 
-            alert(`Successfully swapped ${ethAmount} ETH for ${tokenAmount} Tokens`);
+            toast.success(`Successfully swapped ${ethAmount} ETH for ${tokenAmount} Tokens`);
             setEthAmount('');
             setTokenAmount('');
         } catch (error) {
             console.error('Swap failed:', error);
-            alert('Swap failed. Please try again.');
+            toast.error('Swap failed. Please try again.');
         }
     };
 

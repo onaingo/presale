@@ -2,6 +2,7 @@ import React from 'react';
 import { ethers } from 'ethers';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const AddToWalletButton = ({ className, disabled }) => {
     const { seqid } = useParams(); // Get the seqid from the URL
@@ -14,7 +15,7 @@ const AddToWalletButton = ({ className, disabled }) => {
 
     const handleAddToWallet = async () => {
         if (disabled || !tokenSymbol || !tokenContractAddress) {
-            alert('Token details are not loaded yet or the button is disabled.');
+            toast.warn('Token details are not loaded yet or the button is disabled.');
             return;
         }
 
@@ -29,10 +30,10 @@ const AddToWalletButton = ({ className, disabled }) => {
                     image: tokenImage       // URL to the token's image
                 },
             });
-            alert(`${tokenSymbol} has been added to your wallet!`);
+            toast.success(`${tokenSymbol} has been added to your wallet!`);
         } catch (error) {
             console.error('Failed to add token to wallet:', error);
-            alert('Failed to add token to wallet.');
+            toast.error('Failed to add token to wallet.');
         }
     };
 

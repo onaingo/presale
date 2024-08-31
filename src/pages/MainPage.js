@@ -1,10 +1,10 @@
 // src/pages/MainPage.js
 import React from 'react';
+import { ToastContainer } from '../components/Toast';
 import { useParams } from 'react-router-dom'; 
 import VideoPlaceholder from '../components/VideoPlaceholder';
 import Tabs from '../components/Tabs';
 import SwapInterface from '../components/SwapInterface';
-import ConnectWalletButton from '../components/ConnectWalletButton';
 import { FnftDataProvider } from '../contexts/FnftDataContext'; // Import the context provider
 import './mainPage.css';
 
@@ -17,6 +17,7 @@ const MainPage = () => {
     return (
         <FnftDataProvider>  {/* Wrap your main page with the provider */}
             <div className="main-page">
+                <ToastContainer /> 
                 <div className="content-wrapper">
                     <div className="left-section">
                         <VideoPlaceholder seqid={seqid} />
