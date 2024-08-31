@@ -160,8 +160,8 @@ const SwapInterface = ({ seqid }) => {
             setRemainingSupply(newRemainingSupply);
     
             toast.success(`Successfully swapped ${ethAmount} ETH for ${tokenAmount} Tokens`);
-            setEthAmount('');
-            setTokenAmount('');
+            // setEthAmount('');
+            // setTokenAmount('');
         } catch (error) {
             console.error('Swap failed:', error);
             toast.error('Swap failed. Please try again.');
@@ -204,10 +204,18 @@ const SwapInterface = ({ seqid }) => {
     />
     <span className="currency">ETH</span>
     <span className="usd-value">
-        {ethPriceInUSD !== null && ethAmount
-            ? `$${(ethAmount * ethPriceInUSD).toFixed(2)} USD`
-            : '—'}
-    </span>
+    {ethAmount && ethPriceInUSD === null ? (
+        <div className="loading-dots">
+            <span className="dot">•</span>
+            <span className="dot">•</span>
+            <span className="dot">•</span>
+        </div>
+    ) : ethAmount ? (
+        `$${(parseFloat(ethAmount) * ethPriceInUSD).toFixed(2)} USD`
+    ) : null}
+</span>
+
+
 </div>
 <div className="input-group">
     <label htmlFor="tokenAmount">Receive</label>
