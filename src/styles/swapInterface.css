@@ -38,7 +38,19 @@
     color: #007bff;
     font-size: 14px;
     text-transform: uppercase;
-    padding-left: 20px;
+    margin-left: 20px;
+    padding:0 10px;
+    border-radius: 4px;
+    background-color:white;
+}
+label.currencyLabel {
+    bottom: -17px;
+    position: relative;
+    max-width: fit-content;
+}
+
+.swap-form .input-group:nth-child(1){
+    margin-bottom:10px;
 }
 
 /* swapInterface.css */
@@ -363,13 +375,42 @@
 .dot:nth-child(3) {
     animation-delay: 0.4s;
 }
+.currency-switcher {
+    position: relative;
+    display: inline-block;
+}
 
-.clickable-currency {
+span.currency.visible {
+    background: #f1f1f1;
+    padding: 10px;
+    margin-right: -10px;
+    border-radius: 6px;
+    transition: 0.25s ease;
+}
+span.currency.visible:hover {
+    background: #e5e5e5;
+    transition: 0.25s ease;
+}
+
+.currencyLabel {
+    
+}
+
+.currency {
+    transition: opacity 0.3s ease, transform 0.3s ease;
     cursor: pointer;
-    transition: transform 0.3s ease-in-out, color 0.3s ease-in-out;
 }
 
-.clickable-currency:hover {
-    transform: scale(1.1);
-    color: #007bff; /* Adjust the hover color if desired */
+.visible {
+    opacity: 1;
+    transform: translateY(-76%);
+    z-index: 2;
 }
+
+.hidden {
+    opacity: 0;
+    transform: translateY(25px);
+    z-index: 1;
+}
+
+

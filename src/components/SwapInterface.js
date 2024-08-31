@@ -218,7 +218,7 @@ const SwapInterface = ({ seqid }) => {
             <h2>Own A Piece Of Elmo</h2>
             <div className="swap-form">
         <div className="input-group">
-    <label htmlFor="ethAmount">Buy</label>
+    <label className="currencyLabel" htmlFor="ethAmount">Buy</label>
     <input
         type="number"
         id="ethAmount"
@@ -228,12 +228,21 @@ const SwapInterface = ({ seqid }) => {
         step={getDynamicStep(ethAmount)}
         maxLength="8"
     />
+<div className="currency-switcher">
     <span 
-        className="currency clickable-currency" 
+        className={`currency ${currencyType === 'ETH' ? 'visible' : 'hidden'}`} 
         onClick={toggleCurrencyType}
     >
-        {currencyType}
+        ETH
     </span>
+    <span 
+        className={`currency ${currencyType === 'USD' ? 'visible' : 'hidden'}`} 
+        onClick={toggleCurrencyType}
+    >
+        USD
+    </span>
+</div>
+
     <span className="usd-value">
     {ethAmount && ethPriceInUSD === null ? (
         <div className="loading-dots">
@@ -250,7 +259,7 @@ const SwapInterface = ({ seqid }) => {
 </div>
 
 <div className="input-group">
-    <label htmlFor="tokenAmount">Receive</label>
+    <label className="currencyLabel" htmlFor="tokenAmount">Receive</label>
     <input
         type="number"
         id="tokenAmount"
