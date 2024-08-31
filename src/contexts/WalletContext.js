@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { ethers } from 'ethers';
+import { toast } from 'react-toastify';
 
 export const WalletContext = createContext();
 
@@ -99,7 +100,20 @@ export const WalletProvider = ({ children }) => {
                 resetWalletState();
             }
         } else {
-            alert('MetaMask is not installed. Please install it to use this feature.');
+            toast.dark(
+                <>
+                    MetaMask is not installed. Please install it to use this feature.{' '}
+                    <br />🦊 <a 
+                        href="https://metamask.io/download.html" 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        style={{ color: '#fff', textDecoration: 'underline' }}
+                    >
+                        Download MetaMask
+                    </a>
+                </>, 
+                { autoClose: false, closeOnClick: false }
+            );
         }
     };
 

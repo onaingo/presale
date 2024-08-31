@@ -161,8 +161,9 @@ const SwapInterface = ({ seqid }) => {
                         value={ethAmount}
                         onChange={handleEthChange}
                         placeholder="0.0"
-                        step="0.01"
-                        min="0"
+                        step="0.1"
+                        min="0.01"
+                        max="999"
                     />
                     <span className="currency">ETH</span>
                     <span className="usd-value">
