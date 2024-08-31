@@ -161,9 +161,9 @@ const SwapInterface = ({ seqid }) => {
                         value={ethAmount}
                         onChange={handleEthChange}
                         placeholder="0.0"
-                        step="0.1"
-                        min="0.01"
-                        max="999"
+                        step="0.001"
+                        min="0.001"  // Minimum buy set to 0.001 ETH
+                        max={remainingSupply / rate}  // Maximum buy based on remaining supply and rate
                     />
                     <span className="currency">ETH</span>
                     <span className="usd-value">
@@ -175,13 +175,14 @@ const SwapInterface = ({ seqid }) => {
                 <div className="input-group">
     <label htmlFor="tokenAmount">Receive</label>
     <input
-        type="number"
-        id="tokenAmount"
-        value={tokenAmount}
-        onChange={handleTokenChange}
-        placeholder="0.0"
-        step="1"
-        min="0"
+       type="number"
+       id="tokenAmount"
+       value={tokenAmount}
+       onChange={handleTokenChange}
+       placeholder="0.0"
+       step="1"
+       min="1"  // Minimum token amount
+       max={remainingSupply}  // Maximum based on the remaining supply
     />
     <span className={`currency ${walletBalance !== null && parseFloat(walletBalance) > 0 ? 'adjusted-token-symbol' : ''}`}>
         {status === 'loading' ? 'Loading...' : tokenSymbol ? `$${tokenSymbol}` : '—'}
