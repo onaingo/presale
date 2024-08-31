@@ -21,48 +21,62 @@ export const WalletProvider = ({ children }) => {
                         setProvider(web3Provider);
                         setSigner(web3Provider.getSigner());
                         setIsConnected(true);
+                    } else {
+                        resetWalletState();
                     }
                 } catch (error) {
                     console.error('Error checking wallet connection:', error);
+                    resetWalletState();
                 }
             } else {
                 console.warn('No Ethereum provider found. Install MetaMask.');
             }
         };
 
+        const resetWalletState = () => {
+            setWalletAddress(null);
+            setProvider(null);
+            setSigner(null);
+            setIsConnected(false);
+        };
+
         checkWalletConnection();
 
-        // Listen for account changes
-        if (window.ethereum) {
-            window.ethereum.on('accountsChanged', async (accounts) => {
-                if (accounts.length > 0) {
-                    const newProvider = new ethers.BrowserProvider(window.ethereum);
-                    const newSigner = await newProvider.getSigner();
-                    setWalletAddress(accounts[0]);
-                    setProvider(newProvider);
-                    setSigner(newSigner);
-                    setIsConnected(true);
-                } else {
-                    setWalletAddress(null);
-                    setIsConnected(false);
-                }
-            });
-
-            window.ethereum.on('chainChanged', async () => {
+        // Define event listener functions
+        const handleAccountsChanged = async (accounts) => {
+            if (accounts.length > 0) {
                 const newProvider = new ethers.BrowserProvider(window.ethereum);
                 const newSigner = await newProvider.getSigner();
-                const newAddress = await newSigner.getAddress();
+                setWalletAddress(accounts[0]);
                 setProvider(newProvider);
                 setSigner(newSigner);
-                setWalletAddress(newAddress);
                 setIsConnected(true);
-            });
+            } else {
+                resetWalletState();
+            }
+        };
+
+        const handleChainChanged = async () => {
+            const newProvider = new ethers.BrowserProvider(window.ethereum);
+            const newSigner = await newProvider.getSigner();
+            const newAddress = await newSigner.getAddress();
+            setProvider(newProvider);
+            setSigner(newSigner);
+            setWalletAddress(newAddress);
+            setIsConnected(true);
+        };
+
+        // Add event listeners
+        if (window.ethereum) {
+            window.ethereum.on('accountsChanged', handleAccountsChanged);
+            window.ethereum.on('chainChanged', handleChainChanged);
         }
 
+        // Clean up the event listeners
         return () => {
             if (window.ethereum.removeListener) {
-                window.ethereum.removeListener('accountsChanged');
-                window.ethereum.removeListener('chainChanged');
+                window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
+                window.ethereum.removeListener('chainChanged', handleChainChanged);
             }
         };
     }, []);
@@ -78,9 +92,12 @@ export const WalletProvider = ({ children }) => {
                     setProvider(web3Provider);
                     setSigner(web3Provider.getSigner());
                     setIsConnected(true);
+                } else {
+                    resetWalletState();
                 }
             } catch (error) {
                 console.error('Error connecting wallet:', error);
+                resetWalletState();
             }
         } else {
             alert('MetaMask is not installed. Please install it to use this feature.');
