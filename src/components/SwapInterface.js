@@ -92,15 +92,49 @@ const SwapInterface = ({ seqid }) => {
     }, [isConnected, tokenDetails, walletAddress, signer]);
 
     const handleEthChange = (e) => {
-        const ethValue = e.target.value;
-        setEthAmount(ethValue);
-        setTokenAmount(ethValue * rate);
+        let ethValue = parseFloat(e.target.value);
+    
+        if (isNaN(ethValue) || ethValue === 0) {
+            setEthAmount(e.target.value); // Allow 0 to be set temporarily
+            setTokenAmount(''); // Clear token amount
+            return;
+        }
+    
+        // Ensure the value does not go below the minimum, except when editing (value is 0)
+        if (ethValue < 0.001 && ethValue !== 0) {
+            ethValue = 0.001;
+        } else if (ethValue > remainingSupply / rate) {
+            ethValue = remainingSupply / rate;
+        }
+    
+        setEthAmount(ethValue.toString());
+        setTokenAmount(Number(ethValue * rate).toLocaleString(undefined, {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 6
+        }));
     };
 
     const handleTokenChange = (e) => {
-        const tokenValue = e.target.value;
-        setTokenAmount(tokenValue);
-        setEthAmount(tokenValue / rate);
+        let tokenValue = parseFloat(e.target.value);
+    
+        if (isNaN(tokenValue) || tokenValue === 0) {
+            setTokenAmount(e.target.value); // Allow 0 to be set temporarily
+            setEthAmount(''); // Clear ETH amount
+            return;
+        }
+    
+        // Ensure the value does not go below the minimum, except when editing (value is 0)
+        if (tokenValue < 0.01 && tokenValue !== 0) {
+            tokenValue = 0.1;
+        } else if (tokenValue > remainingSupply) {
+            tokenValue = remainingSupply;
+        }
+    
+        setTokenAmount(tokenValue.toString());
+        setEthAmount(Number(tokenValue / rate).toLocaleString(undefined, {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 6
+        }));
     };
 
     const handleSwap = async () => {
@@ -108,12 +142,17 @@ const SwapInterface = ({ seqid }) => {
             connectWallet();
             return;
         }
-
-        if (!ethAmount || ethAmount <= 0) {
-            toast.info('Please enter a valid ETH amount.');
+    
+        if (!ethAmount || parseFloat(ethAmount) < 0.001) {
+            toast.warn('Minimum buy is 0.001 ETH');
             return;
         }
-
+    
+        if (!tokenAmount || parseFloat(tokenAmount) < 0.01) {
+            toast.warn('Minimum buy is 0.01 Token');
+            return;
+        }
+    
         try {
             const newRemainingSupply = remainingSupply - tokenAmount;
             if (newRemainingSupply < 0) {
@@ -121,7 +160,7 @@ const SwapInterface = ({ seqid }) => {
                 return;
             }
             setRemainingSupply(newRemainingSupply);
-
+    
             toast.success(`Successfully swapped ${ethAmount} ETH for ${tokenAmount} Tokens`);
             setEthAmount('');
             setTokenAmount('');
@@ -130,6 +169,7 @@ const SwapInterface = ({ seqid }) => {
             toast.error('Swap failed. Please try again.');
         }
     };
+    
 
     const getProgress = () => {
         return ((totalSupply - remainingSupply) / totalSupply) * 100;
@@ -153,36 +193,36 @@ const SwapInterface = ({ seqid }) => {
         <div className="swap-interface">
             <h2>Own A Piece Of {tokenSymbol}</h2>
             <div className="swap-form">
-                <div className="input-group">
-                    <label htmlFor="ethAmount">Buy</label>
-                    <input
-                        type="number"
-                        id="ethAmount"
-                        value={ethAmount}
-                        onChange={handleEthChange}
-                        placeholder="0.0"
-                        step="0.001"
-                        min="0.001"  // Minimum buy set to 0.001 ETH
-                        max={remainingSupply / rate}  // Maximum buy based on remaining supply and rate
-                    />
-                    <span className="currency">ETH</span>
-                    <span className="usd-value">
-                        {ethPriceInUSD !== null && ethAmount
-                            ? `$${(ethAmount * ethPriceInUSD).toFixed(2)} USD`
-                            : '—'}
-                    </span>
-                </div>
-                <div className="input-group">
+            <div className="input-group">
+    <label htmlFor="ethAmount">Buy</label>
+    <input
+        type="number"
+        id="ethAmount"
+        value={ethAmount}
+        onChange={handleEthChange}  // Connected to handleEthChange
+        placeholder="0.0"
+        step="0.1"
+        min="0.001"
+        max={remainingSupply / rate}
+    />
+    <span className="currency">ETH</span>
+    <span className="usd-value">
+        {ethPriceInUSD !== null && ethAmount
+            ? `$${(ethAmount * ethPriceInUSD).toFixed(2)} USD`
+            : '—'}
+    </span>
+</div>
+<div className="input-group">
     <label htmlFor="tokenAmount">Receive</label>
     <input
-       type="number"
-       id="tokenAmount"
-       value={tokenAmount}
-       onChange={handleTokenChange}
-       placeholder="0.0"
-       step="1"
-       min="1"  // Minimum token amount
-       max={remainingSupply}  // Maximum based on the remaining supply
+        type="number"
+        id="tokenAmount"
+        value={tokenAmount}
+        onChange={handleTokenChange}  // Connected to handleTokenChange
+        placeholder="0.0"
+        step="1"
+        min="0.01"
+        max={remainingSupply}
     />
     <span className={`currency ${walletBalance !== null && parseFloat(walletBalance) > 0 ? 'adjusted-token-symbol' : ''}`}>
         {status === 'loading' ? 'Loading...' : tokenSymbol ? `$${tokenSymbol}` : '—'}
