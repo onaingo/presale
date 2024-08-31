@@ -79,7 +79,7 @@ const SwapInterface = ({ seqid }) => {
                     const provider = new ethers.BrowserProvider(window.ethereum);
                     const signer = await provider.getSigner(); // Define the signer here
                     const address = await signer.getAddress(); // Fetch the signer's address
-                    const balance = await fetchTokenBalance(signer, tokenDetails.tokenContractAddress);
+                    const balance = await fetchTokenBalance(signer, tokenDetails.vaultAddress);
                     setWalletBalance(balance);
                 } catch (error) {
                     console.error('Error fetching wallet balance:', error);
@@ -135,12 +135,12 @@ const SwapInterface = ({ seqid }) => {
         return ((totalSupply - remainingSupply) / totalSupply) * 100;
     };
 
-    const fetchTokenBalance = async (signer, tokenContractAddress) => {
+    const fetchTokenBalance = async (signer, vaultAddress) => {
         try {
             if (!signer) throw new Error("Signer is not available");
 
             const userAddress = await signer.getAddress();
-            const contract = new ethers.Contract(tokenContractAddress, fnftTokenLogicABI, signer);
+            const contract = new ethers.Contract(vaultAddress, fnftTokenLogicABI, signer);
             const balance = await contract.balanceOf(userAddress);
             return ethers.formatUnits(balance, 18); 
         } catch (error) {
