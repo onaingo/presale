@@ -98,7 +98,6 @@
     font-weight: bold;
     color: #333;
     font-size: 18px;
-    pointer-events: none;
 }
 
 /* Specific style for the ETH symbol in the Buy input field */
@@ -111,6 +110,7 @@
 #tokenAmount ~ .currency {
     top: 46%; /* Centered vertically */
     transform: translateY(-50%);
+    pointer-events: none;
 }
 
 /* adjust symbol position after hide add button element */
@@ -366,10 +366,11 @@
 
 .clickable-currency {
     cursor: pointer;
-    transition: transform 0.3s ease-in-out;
+    transition: transform 0.3s ease-in-out, color 0.3s ease-in-out;
 }
 
 .clickable-currency:hover {
     transform: scale(1.1);
+    color: #007bff; /* Adjust the hover color if desired */
 }
 

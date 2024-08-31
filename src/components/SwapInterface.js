@@ -41,15 +41,17 @@ const SwapInterface = ({ seqid }) => {
     // Switchy ETH & USD values
     const toggleCurrencyType = () => {
         if (currencyType === 'ETH') {
+            if (ethAmount && ethPriceInUSD) {
+                const usdValue = (parseFloat(ethAmount) * ethPriceInUSD).toFixed(2);
+                setEthAmount(usdValue);
+            }
             setCurrencyType('USD');
-            if (ethAmount && ethPriceInUSD) {
-                setEthAmount((parseFloat(ethAmount) * ethPriceInUSD).toFixed(2));
-            }
         } else {
-            setCurrencyType('ETH');
             if (ethAmount && ethPriceInUSD) {
-                setEthAmount((parseFloat(ethAmount) / ethPriceInUSD).toFixed(6));
+                const ethValue = (parseFloat(ethAmount) / ethPriceInUSD).toFixed(6);
+                setEthAmount(ethValue);
             }
+            setCurrencyType('ETH');
         }
     };    
 
@@ -215,7 +217,7 @@ const SwapInterface = ({ seqid }) => {
         <div className="swap-interface">
             <h2>Own A Piece Of Elmo</h2>
             <div className="swap-form">
-            <div className="input-group">
+        <div className="input-group">
     <label htmlFor="ethAmount">Buy</label>
     <input
         type="number"
