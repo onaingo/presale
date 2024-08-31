@@ -199,9 +199,9 @@ const SwapInterface = ({ seqid }) => {
         {walletBalance !== null ? `${walletBalance} ${tokenSymbol}` : '—'}
     </span>
         {/* Etherscan Button */}
-        {tokenDetails && tokenDetails.tokenContractAddress && (
+        {tokenDetails && tokenDetails.vaultAddress && (
         <a
-            href={`https://sepolia.etherscan.io/token/${tokenDetails.tokenContractAddress}`}
+            href={`https://sepolia.etherscan.io/token/${tokenDetails.vaultAddress}`}
             target="_blank"
             rel="noopener noreferrer"
             className="etherscan-button"

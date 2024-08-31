@@ -10,11 +10,11 @@ const AddToWalletButton = ({ className, disabled }) => {
     // Access token details from Redux state using seqid
     const tokenDetails = useSelector((state) => state.fnftData.data.find(item => item.seqid === Number(seqid)));
     const tokenSymbol = tokenDetails?.symbol;
-    const tokenContractAddress = tokenDetails?.tokenContractAddress;
+    const vaultAddress = tokenDetails?.vaultAddress;
     const tokenImage = `${window.location.origin}/images/${tokenSymbol}.jpg`;
 
     const handleAddToWallet = async () => {
-        if (disabled || !tokenSymbol || !tokenContractAddress) {
+        if (disabled || !tokenSymbol || !vaultAddress) {
             toast.warn('Token details are not loaded yet or the button is disabled.');
             return;
         }
@@ -24,7 +24,7 @@ const AddToWalletButton = ({ className, disabled }) => {
             await provider.send('wallet_watchAsset', {
                 type: 'ERC20',
                 options: {
-                    address: tokenContractAddress,  // Correct contract address
+                    address: vaultAddress,  // Correct contract address
                     symbol: tokenSymbol,    // Token symbol
                     decimals: 18,           // Common decimal places for ERC-20 tokens
                     image: tokenImage       // URL to the token's image

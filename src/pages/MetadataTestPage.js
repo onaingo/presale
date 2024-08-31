@@ -27,14 +27,16 @@ const MetadataTestPage = () => {
         <div>
             <h2>Metadata Test Page</h2>
             <p><strong>SeqID:</strong> {item.seqid}</p>
-            <p><strong>ID:</strong> {item.id}</p>
             <p><strong>Name:</strong> {item.name}</p>
             <p><strong>Symbol:</strong> {item.symbol}</p>
-            <p><strong>Token Contract Address:</strong> {item.tokenContractAddress}</p>
             <p><strong>NFT Contract Address:</strong> {item.nftContractAddress}</p>
             <p><strong>IPFS URL:</strong> <a href={item.ipfsUrl} target="_blank" rel="noopener noreferrer">{item.ipfsUrl}</a></p>
             <p><strong>Local Image:</strong> {item.localImage}</p>
             <p><strong>Local Video:</strong> {item.localVideo}</p>
+            <p><strong>NFT Id:</strong> {item.nftId}</p>
+            <p><strong>Buyout Price:</strong> {(Number(item.price) / 10 ** 18).toFixed(4)} ETH</p>
+            <p><strong>Vault Address (FNFT):</strong> {item.vaultAddress}</p>
+            <p><strong>VaultId:</strong> {item.vaultId}</p>
         </div>
     );
 };
