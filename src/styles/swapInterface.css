@@ -151,6 +151,21 @@
     cursor: not-allowed;
 }
 
+/*Etherscan link button*/
+.swap-form .input-group .etherscan-button {
+    position: absolute;
+    left: 7px; /* Align on the left side */
+    bottom: -20px; /* Align below the wallet balance */
+    color: #007bff;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.swap-form .input-group .etherscan-button:hover {
+    text-decoration: underline;
+}
+
+
 /* Custom Buy Button styling */
 .custom-button.primary {
     padding-top: 20px;

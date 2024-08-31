@@ -9,6 +9,13 @@ export const WalletProvider = ({ children }) => {
     const [signer, setSigner] = useState(null);
     const [isConnected, setIsConnected] = useState(false);
 
+    const resetWalletState = () => {
+        setWalletAddress(null);
+        setProvider(null);
+        setSigner(null);
+        setIsConnected(false);
+    };
+
     useEffect(() => {
         const checkWalletConnection = async () => {
             if (window.ethereum) {
@@ -33,16 +40,8 @@ export const WalletProvider = ({ children }) => {
             }
         };
 
-        const resetWalletState = () => {
-            setWalletAddress(null);
-            setProvider(null);
-            setSigner(null);
-            setIsConnected(false);
-        };
-
         checkWalletConnection();
 
-        // Define event listener functions
         const handleAccountsChanged = async (accounts) => {
             if (accounts.length > 0) {
                 const newProvider = new ethers.BrowserProvider(window.ethereum);
@@ -66,15 +65,15 @@ export const WalletProvider = ({ children }) => {
             setIsConnected(true);
         };
 
-        // Add event listeners
+        // Add event listeners if Ethereum is available
         if (window.ethereum) {
             window.ethereum.on('accountsChanged', handleAccountsChanged);
             window.ethereum.on('chainChanged', handleChainChanged);
         }
 
-        // Clean up the event listeners
+        // Clean up the event listeners if Ethereum is available
         return () => {
-            if (window.ethereum.removeListener) {
+            if (window.ethereum && window.ethereum.removeListener) {
                 window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
                 window.ethereum.removeListener('chainChanged', handleChainChanged);
             }

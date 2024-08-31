@@ -194,10 +194,20 @@ const SwapInterface = ({ seqid }) => {
 
     {/* Always render the AddToWalletButton */}
     <AddToWalletButton className="add-to-wallet-button" disabled={!isConnected} />
-
     <span className="wallet-balance">
         {walletBalance !== null ? `${walletBalance} ${tokenSymbol}` : '—'}
     </span>
+        {/* Etherscan Button */}
+        {tokenDetails && tokenDetails.tokenContractAddress && (
+        <a
+            href={`https://sepolia.etherscan.io/token/${tokenDetails.tokenContractAddress}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="etherscan-button"
+        >
+            View on Etherscan
+        </a>
+    )}
 </div>
                 <Button
                     label={isConnected ? 'Swap' : 'Connect Wallet'}
