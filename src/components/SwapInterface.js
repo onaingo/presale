@@ -27,6 +27,7 @@ const SwapInterface = ({ seqid }) => {
     const tokenDetails = fnftData.find(item => item.seqid === Number(seqid));
     const tokenSymbol = tokenDetails?.symbol;
     const saleEndDate = useMemo(() => new Date('2024-09-01T00:00:00Z'), []);
+    const [currencyType, setCurrencyType] = useState('ETH');
 
     // Function to determine the step based on the current value
     const getDynamicStep = (value) => {
@@ -36,6 +37,21 @@ const SwapInterface = ({ seqid }) => {
         }
         return 1; // Default step if there are no decimals
     };
+
+    // Switchy ETH & USD values
+    const toggleCurrencyType = () => {
+        if (currencyType === 'ETH') {
+            setCurrencyType('USD');
+            if (ethAmount && ethPriceInUSD) {
+                setEthAmount((parseFloat(ethAmount) * ethPriceInUSD).toFixed(2));
+            }
+        } else {
+            setCurrencyType('ETH');
+            if (ethAmount && ethPriceInUSD) {
+                setEthAmount((parseFloat(ethAmount) / ethPriceInUSD).toFixed(6));
+            }
+        }
+    };    
 
     useEffect(() => {
         const fetchETHPrice = async () => {
@@ -101,24 +117,32 @@ const SwapInterface = ({ seqid }) => {
     }, [isConnected, tokenDetails, walletAddress, signer]);
 
     const handleEthChange = (e) => {
-        let ethValue = e.target.value;
+        let value = e.target.value;
     
-        if (isNaN(parseFloat(ethValue)) || parseFloat(ethValue) < 0) {
+        if (isNaN(parseFloat(value)) || parseFloat(value) < 0) {
             setEthAmount(''); 
             setTokenAmount(''); 
             return;
         }
     
-        if (ethValue.length > 8) {
-            ethValue = ethValue.slice(0, 8);
+        if (value.length > 8) {
+            value = value.slice(0, 8);
         }
     
-        setEthAmount(ethValue);
-        setTokenAmount(Number(parseFloat(ethValue) * rate).toLocaleString(undefined, {
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 6
-        }));
-    };
+        setEthAmount(value);
+    
+        if (currencyType === 'ETH') {
+            setTokenAmount(Number(parseFloat(value) * rate).toLocaleString(undefined, {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 6
+            }));
+        } else {
+            setTokenAmount(Number(parseFloat(value) / ethPriceInUSD * rate).toLocaleString(undefined, {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 6
+            }));
+        }
+    };    
 
     const handleTokenChange = (e) => {
         let tokenValue = e.target.value;
@@ -199,10 +223,15 @@ const SwapInterface = ({ seqid }) => {
         value={ethAmount}
         onChange={handleEthChange}
         placeholder="0.0"
-        step={getDynamicStep(ethAmount)}  // Update this line
+        step={getDynamicStep(ethAmount)}
         maxLength="8"
     />
-    <span className="currency">ETH</span>
+    <span 
+        className="currency clickable-currency" 
+        onClick={toggleCurrencyType}
+    >
+        {currencyType}
+    </span>
     <span className="usd-value">
     {ethAmount && ethPriceInUSD === null ? (
         <div className="loading-dots">
@@ -210,13 +239,14 @@ const SwapInterface = ({ seqid }) => {
             <span className="dot">•</span>
             <span className="dot">•</span>
         </div>
-    ) : ethAmount ? (
+    ) : ethAmount && currencyType === 'ETH' ? (
         `$${(parseFloat(ethAmount) * ethPriceInUSD).toFixed(2)} USD`
+    ) : ethAmount && currencyType === 'USD' ? (
+        `${(parseFloat(ethAmount) / ethPriceInUSD).toFixed(6)} ETH`
     ) : null}
 </span>
-
-
 </div>
+
 <div className="input-group">
     <label htmlFor="tokenAmount">Receive</label>
     <input
