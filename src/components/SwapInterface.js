@@ -12,7 +12,7 @@ import { ethers } from 'ethers';
 import { fnftTokenLogicABI } from '../smartContracts/ABI';
 
 const SwapInterface = ({ seqid }) => {
-    const { isConnected, connectWallet, signer } = useContext(WalletContext);
+    const { isConnected, connectWallet, walletAddress, signer } = useContext(WalletContext);
     const fnftData = useFnftData();
     const [ethAmount, setEthAmount] = useState('');
     const [tokenAmount, setTokenAmount] = useState('');
@@ -88,7 +88,7 @@ const SwapInterface = ({ seqid }) => {
         };
 
         fetchWalletBalance();
-    }, [isConnected, tokenDetails]);
+    }, [isConnected, tokenDetails, walletAddress, signer]);
 
     const handleEthChange = (e) => {
         const ethValue = e.target.value;

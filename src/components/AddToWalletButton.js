@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { ethers } from 'ethers';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 
 const AddToWalletButton = ({ className, disabled }) => {
-    const [isConnected, setIsConnected] = useState(false);
     const { seqid } = useParams(); // Get the seqid from the URL
 
     // Access token details from Redux state using seqid
@@ -13,33 +12,9 @@ const AddToWalletButton = ({ className, disabled }) => {
     const tokenContractAddress = tokenDetails?.tokenContractAddress;
     const tokenImage = `${window.location.origin}/images/${tokenSymbol}.jpg`;
 
-    useEffect(() => {
-        const checkWalletConnection = async () => {
-            if (window.ethereum) {
-                const provider = new ethers.BrowserProvider(window.ethereum);
-                const accounts = await provider.listAccounts();
-                setIsConnected(accounts.length > 0);
-            }
-        };
-
-        checkWalletConnection();
-    }, []);
-
     const handleAddToWallet = async () => {
-        if (!isConnected) {
-            try {
-                const provider = new ethers.BrowserProvider(window.ethereum);
-                await provider.send('eth_requestAccounts', []);
-                setIsConnected(true);
-            } catch (error) {
-                console.error('Failed to connect wallet:', error);
-                alert('Failed to connect wallet.');
-            }
-            return;
-        }
-
-        if (!tokenSymbol || !tokenContractAddress) {
-            alert('Token details are not loaded yet.');
+        if (disabled || !tokenSymbol || !tokenContractAddress) {
+            alert('Token details are not loaded yet or the button is disabled.');
             return;
         }
 

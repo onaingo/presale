@@ -1,4 +1,3 @@
-// src/contexts/WalletContext.js
 import React, { createContext, useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 
@@ -35,9 +34,13 @@ export const WalletProvider = ({ children }) => {
 
         // Listen for account changes
         if (window.ethereum) {
-            window.ethereum.on('accountsChanged', (accounts) => {
+            window.ethereum.on('accountsChanged', async (accounts) => {
                 if (accounts.length > 0) {
+                    const newProvider = new ethers.BrowserProvider(window.ethereum);
+                    const newSigner = await newProvider.getSigner();
                     setWalletAddress(accounts[0]);
+                    setProvider(newProvider);
+                    setSigner(newSigner);
                     setIsConnected(true);
                 } else {
                     setWalletAddress(null);
@@ -45,10 +48,23 @@ export const WalletProvider = ({ children }) => {
                 }
             });
 
-            window.ethereum.on('chainChanged', () => {
-                window.location.reload();
+            window.ethereum.on('chainChanged', async () => {
+                const newProvider = new ethers.BrowserProvider(window.ethereum);
+                const newSigner = await newProvider.getSigner();
+                const newAddress = await newSigner.getAddress();
+                setProvider(newProvider);
+                setSigner(newSigner);
+                setWalletAddress(newAddress);
+                setIsConnected(true);
             });
         }
+
+        return () => {
+            if (window.ethereum.removeListener) {
+                window.ethereum.removeListener('accountsChanged');
+                window.ethereum.removeListener('chainChanged');
+            }
+        };
     }, []);
 
     const connectWallet = async () => {
