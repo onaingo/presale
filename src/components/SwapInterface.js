@@ -26,7 +26,7 @@ const SwapInterface = ({ seqid }) => {
     const status = useSelector((state) => state.fnftData.status);
     const tokenDetails = fnftData.find(item => item.seqid === Number(seqid));
     const tokenSymbol = tokenDetails?.symbol;
-    const saleEndDate = useMemo(() => new Date('2024-09-01T00:00:00Z'), []);
+    const saleEndDate = useMemo(() => new Date('2024-09-08T00:00:00Z'), []);
     const [currencyType, setCurrencyType] = useState('ETH');
 
     // Function to determine the step based on the current value
